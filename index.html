@@ -1,0 +1,1293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BlazeWebGuide – Professional Web Development Tutorials</title>
+    <meta name="description" content="Real-world web development tutorials with step-by-step solutions. Learn hosting, DNS, HTTPS, SEO, and monetization.">
+    <meta name="author" content="Randy Blaze">
+    <meta name="robots" content="index, follow">
+    <meta name="google-site-verification" content="79akMtoeurWqTLJu-1355qBxIJe6fupxUwqqjpjYnv4" />
+    <meta property="og:title" content="BlazeWebGuide – Professional Web Development Lessons">
+    <meta property="og:description" content="Learn real-world web development with step-by-step tutorials.">
+    <meta property="og:image" content="https://blazewebguide.vercel.app/logo.png">
+    <meta property="og:url" content="https://blazewebguide.vercel.app">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="icon" href="favicon.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0b0f15;
+            --surface: #121820;
+            --card: #18202a;
+            --border: rgba(59,130,246,0.1);
+            --nav-hover: #60a5fa;
+            --text: #e2e8f0;
+            --text-secondary: #94a3b8;
+            --muted: #64748b;
+            --accent: #3b82f6;
+            --accent-dark: #2563eb;
+            --accent-light: #60a5fa;
+            --accent-glow: rgba(59,130,246,0.2);
+            --font: 'Inter', sans-serif;
+            --code: 'Fira Code', monospace;
+            --shadow: rgba(0,0,0,0.3);
+            --logo-color: #e2e8f0;
+            transition: background 0.3s, color 0.3s;
+            /* 3D nav colors - purple vibe to match nav theme */
+            --nav-bg: #12141c;
+            --nav-surface: #1a1c26;
+            --nav-hover: var(--accent-light);
+            --nav-glow: rgba(167, 139, 250, 0.15);
+        }
+
+        body.light {
+            --bg: #f8fafc;
+            --surface: #f1f5f9;
+            --card: #ffffff;
+            --border: rgba(59,130,246,0.15);
+            --text: #0f172a;
+            --text-secondary: #334155;
+            --muted: #64748b;
+            --shadow: rgba(0,0,0,0.08);
+            --logo-color: #0f172a;
+            --nav-bg: #eef1f6;
+            --nav-surface: #e4e8f0;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: var(--font);
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+            transition: background 0.3s, color 0.3s;
+            padding-left: 180px;
+        }
+
+        a { color: var(--accent-light); text-decoration: none; transition: 0.3s; }
+        a:hover { color: var(--accent); }
+
+        /* ===== 3D SIDEBAR NAV ===== */
+        .nav-enclosure {
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            width: 180px;
+            z-index: 1000;
+            perspective: none;
+            perspective-origin: 50% 50%;
+            background: var(--nav-bg);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px 0;
+            transition: background 0.3s, transform 0.3s ease;
+        }
+
+        .nav-3d {
+            position: relative;
+            width: 150px;
+            transform-style: preserve-3d;
+            transform: none;
+            transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .nav-3d:hover {
+            transform: rotateX(4deg) rotateY(-3deg);
+        }
+
+        /* Logo */
+        .nav-logo {
+            text-align: center;
+            padding: 10px 0 16px;
+            margin-bottom: 6px;
+        }
+        .nav-logo a {
+            font-size: 13px;
+            font-weight: 800;
+            color: var(--logo-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        .nav-logo a span { color: var(--nav-hover); }
+        .nav-logo img { height: 22px; border-radius: 4px; }
+
+        .nav-3d ul {
+            list-style: none;
+            position: relative;
+            padding: 0;
+            margin: 0;
+            transform-style: preserve-3d;
+            filter: drop-shadow(0 15px 30px rgba(0,0,0,0.4));
+        }
+
+        .nav-3d ul li {
+            position: relative;
+            list-style: none;
+            transform-style: preserve-3d;
+            transition: transform 0.55s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.4s ease;
+            margin: 0 4px 3px;
+        }
+
+        /* 3D faces */
+        .nav-3d ul li::before,
+        .nav-3d ul li::after {
+            content: '';
+            position: absolute;
+            transition: all 0.55s cubic-bezier(0.34, 1.56, 0.64, 1);
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .nav-3d ul li::before {
+            top: -8px;
+            left: 4px;
+            right: 4px;
+            height: 10px;
+            background: #1a1a24;
+            border-radius: 8px 8px 0 0;
+            transform-origin: bottom center;
+            transform: rotateX(-90deg) translateZ(0);
+            opacity: 0;
+        }
+
+        .nav-3d ul li::after {
+            top: 4px;
+            right: -8px;
+            bottom: -2px;
+            width: 8px;
+            background: #14141c;
+            border-radius: 0 8px 8px 0;
+            transform-origin: left center;
+            transform: rotateY(90deg) translateZ(0);
+            opacity: 0.6;
+        }
+
+        .nav-3d ul li a {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px 10px 38px;
+            text-decoration: none;
+            color: #7a7a88;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
+            background: var(--nav-surface);
+            border-radius: 8px;
+            transition: all 0.55s cubic-bezier(0.34, 1.56, 0.64, 1);
+            z-index: 2;
+            border: 1px solid var(--border);
+            min-height: 40px;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+
+        .nav-3d ul li a::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg, transparent 30%, rgba(255,255,255,0.02) 50%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.6s ease;
+            pointer-events: none;
+            z-index: 3;
+        }
+
+        .nav-3d ul li a .icon-strip {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 32px;
+            height: 100%;
+            background: rgba(0,0,0,0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px 0 0 8px;
+            border-right: 1px solid var(--border);
+            transition: all 0.55s cubic-bezier(0.34, 1.56, 0.64, 1);
+            z-index: 2;
+        }
+
+        .nav-3d ul li a .icon-strip i {
+            font-size: 12px;
+            color: #58586a;
+            transition: all 0.55s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .nav-3d ul li a .active-dot {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%) scale(0);
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: var(--nav-hover);
+            box-shadow: 0 0 8px rgba(59, 130, 246, 0.5);
+            transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            z-index: 2;
+        }
+
+        /* HOVER */
+        .nav-3d ul li:hover {
+            transform: translateZ(25px) translateX(6px);
+            z-index: 10;
+        }
+
+        .nav-3d ul li:hover a {
+            background: linear-gradient(135deg, #2563eb 0%, #3b82f6 40%, #60a5fa 100%);
+            color: #fff;
+            border-color: rgba(59, 130, 246, 0.25);
+            box-shadow: 0 0 25px rgba(59, 130, 246, 0.15), 0 6px 20px rgba(0,0,0,0.3);
+        }
+
+        .nav-3d ul li:hover a::after { opacity: 1; }
+
+        .nav-3d ul li:hover a .icon-strip {
+            background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 100%);
+            border-right-color: rgba(59, 130, 246, 0.15);
+        }
+
+        .nav-3d ul li:hover a .icon-strip i {
+            color: #fff;
+            text-shadow: 0 0 12px rgba(59, 130, 246, 0.6);
+            transform: scale(1.1);
+        }
+
+        .nav-3d ul li:hover a .active-dot {
+            transform: translateY(-50%) scale(1);
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.6);
+        }
+
+        .nav-3d ul li:hover::before {
+            opacity: 1;
+            background: linear-gradient(135deg, #3b82f6, #60a5fa);
+            box-shadow: 0 -4px 12px rgba(59, 130, 246, 0.12);
+        }
+
+        .nav-3d ul li:hover::after {
+            background: linear-gradient(180deg, #2563eb, #1d4ed8);
+            opacity: 1;
+        }
+
+        .nav-3d:hover ul li:not(:hover) {
+            filter: brightness(0.6) saturate(0.4);
+        }
+
+        /* ACTIVE */
+        .nav-3d ul li.active {
+            transform: translateZ(25px) translateX(6px);
+            z-index: 10;
+        }
+
+        .nav-3d ul li.active a {
+            background: linear-gradient(135deg, #2563eb 0%, #3b82f6 40%, #60a5fa 100%);
+            color: #fff;
+            border-color: rgba(59, 130, 246, 0.25);
+            box-shadow: 0 0 25px rgba(59, 130, 246, 0.15), 0 6px 20px rgba(0,0,0,0.3);
+        }
+
+        .nav-3d ul li.active a .icon-strip {
+            background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 100%);
+            border-right-color: rgba(59, 130, 246, 0.15);
+        }
+
+        .nav-3d ul li.active a .icon-strip i {
+            color: #fff;
+            text-shadow: 0 0 12px rgba(59, 130, 246, 0.6);
+        }
+
+        .nav-3d ul li.active a .active-dot {
+            transform: translateY(-50%) scale(1);
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.6);
+        }
+
+        .nav-3d ul li.active::before {
+            opacity: 1;
+            background: linear-gradient(135deg, #3b82f6, #60a5fa);
+        }
+
+        .nav-3d ul li.active::after {
+            background: linear-gradient(180deg, #2563eb, #1d4ed8);
+            opacity: 1;
+        }
+
+        /* Nav Theme Toggle */
+        .nav-theme-toggle {
+            margin-top: auto;
+            padding: 10px 0;
+            text-align: center;
+        }
+        .nav-theme-toggle button {
+            width: 34px;
+            height: 34px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: var(--nav-surface);
+            color: var(--muted);
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+        .nav-theme-toggle button:hover {
+            border-color: var(--nav-hover);
+            color: var(--nav-hover);
+        }
+
+        /* Mobile toggle button */
+        .nav-toggle-btn {
+            display: none;
+            position: fixed;
+            top: 12px;
+            left: 12px;
+            z-index: 1100;
+            width: 38px;
+            height: 38px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: var(--nav-bg);
+            color: var(--text);
+            cursor: pointer;
+            font-size: 18px;
+            align-items: center;
+            justify-content: center;
+            transition: 0.3s;
+        }
+        .nav-toggle-btn:hover {
+            border-color: var(--nav-hover);
+            color: var(--nav-hover);
+        }
+
+        /* ===== CONTENT ADJUSTMENT ===== */
+        section[id] {
+            scroll-margin-top: 30px;
+        }
+
+        .hero {
+            min-height: 75vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 80px 30px 60px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-content h1 {
+            font-size: clamp(32px, 5vw, 64px);
+            font-weight: 900;
+            line-height: 1.15;
+            letter-spacing: -1px;
+            margin-bottom: 18px;
+        }
+        .hero-content h1 span { color: var(--accent-light); }
+        .hero-content p {
+            font-size: clamp(14px, 1.5vw, 18px);
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto 28px;
+        }
+
+        .hero-stats { display: flex; gap: 30px; justify-content: center; margin-top: 25px; }
+        .hero-stats span { font-size: 14px; color: var(--muted); }
+        .hero-stats strong { color: var(--text); font-size: 16px; }
+
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            padding: 14px 28px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+            color: #fff;
+            font-size: 14px;
+            font-weight: 700;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 25px var(--accent-glow); color: #fff; }
+
+        /* ===== SECTION LABELS (reuse from old design) ===== */
+        .section-label {
+            text-align: center;
+            color: var(--accent);
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+        }
+        .section-title {
+            text-align: center;
+            font-size: clamp(26px, 3.5vw, 40px);
+            font-weight: 800;
+            margin-bottom: 40px;
+        }
+
+        .container { max-width: 1100px; margin: 0 auto; padding: 0 20px; }\n\n        /* Offset main content for the sidebar */\n        main, section {\n            margin-left: 180px;\n        }\n        footer {\n            margin-left: 180px;\n        }
+        section { padding: 80px 0; }
+
+        /* ===== TEACH / CURRICULUM ===== */
+        .teach-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 50px;
+        }
+        .teach-card {
+            background: var(--card);
+            border-radius: 14px;
+            padding: 30px 24px;
+            text-align: center;
+            border: 1px solid var(--border);
+            transition: all 0.3s;
+        }
+        .teach-card:hover { transform: translateY(-4px); border-color: var(--accent); box-shadow: 0 10px 30px var(--accent-glow); }
+        .teach-card .icon { font-size: 36px; margin-bottom: 12px; color: var(--accent-light); }
+        .teach-card h4 { font-size: 18px; margin-bottom: 8px; }
+        .teach-card p { color: var(--text-secondary); font-size: 13px; line-height: 1.6; }
+
+        .teach-topics { display: grid; gap: 20px; }
+        .teach-topic {
+            background: var(--card);
+            padding: 28px 30px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            transition: all 0.3s;
+        }
+        .teach-topic:hover { border-color: var(--accent); }
+        .teach-topic h4 { font-size: 16px; margin-bottom: 8px; }
+        .teach-topic p { color: var(--text-secondary); font-size: 13px; line-height: 1.7; margin-bottom: 12px; }
+        .tags { display: flex; gap: 8px; flex-wrap: wrap; }
+        .tags span {
+            padding: 4px 12px;
+            background: rgba(59,130,246,0.1);
+            border-radius: 50px;
+            color: var(--accent-light);
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        /* ===== PLAYGROUND ===== */
+        .playground-actions { display: flex; gap: 12px; justify-content: center; margin-bottom: 20px; flex-wrap: wrap; }
+        .btn-sm {
+            padding: 10px 20px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .btn-sm:hover { transform: translateY(-2px); box-shadow: 0 6px 20px var(--accent-glow); }
+        .btn-sm-outline {
+            padding: 10px 20px;
+            background: transparent;
+            color: var(--accent-light);
+            border: 1px solid var(--accent);
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .btn-sm-outline:hover { background: rgba(59,130,246,0.1); }
+
+        .playground-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            min-height: 400px;
+        }
+        .playground-editors { display: flex; flex-direction: column; gap: 10px; }
+        .editor-box { display: flex; flex-direction: column; }
+        .editor-header {
+            padding: 8px 14px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-bottom: none;
+            border-radius: 8px 8px 0 0;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--muted);
+        }
+        .editor-header .lang-label i { margin-right: 6px; }
+        .editor-box textarea {
+            width: 100%;
+            height: 100px;
+            background: #0a0d14;
+            border: 1px solid var(--border);
+            border-radius: 0 0 8px 8px;
+            padding: 12px;
+            font-family: var(--code);
+            font-size: 12px;
+            color: var(--text);
+            resize: vertical;
+            outline: none;
+            tab-size: 2;
+        }
+        body.light .editor-box textarea { background: #f8fafc; }
+
+        .playground-output { display: flex; flex-direction: column; }
+        .output-header {
+            padding: 8px 14px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-bottom: none;
+            border-radius: 8px 8px 0 0;
+            font-size: 12px;
+            color: var(--muted);
+        }
+        .playground-output iframe {
+            width: 100%;
+            flex: 1;
+            min-height: 320px;
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 0 0 8px 8px;
+        }
+
+        /* ===== BLOG ===== */
+        .search-bar {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 25px;
+            justify-content: center;
+        }
+        .search-bar input {
+            flex: 1;
+            min-width: 220px;
+            max-width: 400px;
+            padding: 12px 18px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
+            font-size: 14px;
+            font-family: var(--font);
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        .search-bar input:focus { border-color: var(--accent); }
+        .category-filters {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 25px;
+        }
+        .category-filters button {
+            padding: 8px 16px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text-secondary);
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: var(--font);
+        }
+        .category-filters button:hover,
+        .category-filters button.active {
+            background: var(--accent);
+            color: #fff;
+            border-color: var(--accent);
+        }
+        .blog-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+        .blog-card {
+            background: var(--card);
+            border-radius: 14px;
+            padding: 28px;
+            border: 1px solid var(--border);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .blog-card:hover { transform: translateY(-4px); border-color: var(--accent); box-shadow: 0 10px 30px var(--accent-glow); }
+        .blog-card .tag {
+            display: inline-block;
+            padding: 3px 12px;
+            border-radius: 50px;
+            background: rgba(59,130,246,0.1);
+            color: var(--accent-light);
+            font-size: 11px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+        .blog-card h3 { font-size: 17px; margin-bottom: 8px; line-height: 1.4; }
+        .blog-card p { color: var(--text-secondary); font-size: 13px; line-height: 1.7; margin-bottom: 12px; }
+        .read-more { color: var(--accent-light); font-size: 12px; font-weight: 600; }
+
+        .blog-detail { max-width: 750px; margin: 0 auto; }
+        .blog-detail .back {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--muted);
+            font-size: 13px;
+            cursor: pointer;
+            margin-bottom: 20px;
+            transition: 0.3s;
+        }
+        .blog-detail .back:hover { color: var(--accent-light); }
+        .blog-detail .tag {
+            display: inline-block;
+            padding: 4px 14px;
+            border-radius: 50px;
+            background: rgba(59,130,246,0.1);
+            color: var(--accent-light);
+            font-size: 12px;
+            font-weight: 700;
+            margin-bottom: 14px;
+        }
+        .blog-detail h2 { font-size: 28px; margin-bottom: 8px; }
+        .blog-detail .meta { color: var(--muted); font-size: 13px; margin-bottom: 25px; }
+        .blog-detail h3 { font-size: 19px; margin: 24px 0 10px; }
+        .blog-detail ul, .blog-detail ol { margin: 12px 0; padding-left: 24px; }
+        .blog-detail li { margin-bottom: 6px; color: var(--text-secondary); }
+        .blog-detail pre {
+            background: #0a0d14;
+            padding: 16px;
+            border-radius: 10px;
+            overflow-x: auto;
+            font-family: var(--code);
+            font-size: 13px;
+            line-height: 1.6;
+            margin: 16px 0;
+            border: 1px solid var(--border);
+            color: var(--text);
+        }
+        .blog-detail code {
+            background: rgba(59,130,246,0.08);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: var(--code);
+            font-size: 13px;
+        }
+
+        /* ===== PAGES ===== */
+        .page-nav { display: flex; gap: 10px; margin-bottom: 30px; flex-wrap: wrap; }
+        .page-nav button {
+            padding: 8px 18px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-secondary);
+            font-size: 13px;
+            cursor: pointer;
+            transition: 0.3s;
+            font-family: var(--font);
+        }
+        .page-nav button.active, .page-nav button:hover {
+            border-color: var(--accent);
+            color: var(--accent-light);
+            background: rgba(59,130,246,0.08);
+        }
+
+        /* ===== FOOTER ===== */
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            border-top: 1px solid var(--border);
+            color: var(--muted);
+            font-size: 13px;
+        }
+        .social { display: flex; gap: 16px; justify-content: center; margin-bottom: 14px; }
+        .social a {
+            width: 38px; height: 38px;
+            border-radius: 10px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--muted);
+            transition: 0.3s;
+            font-size: 16px;
+        }
+        .social a:hover { border-color: var(--accent); color: var(--accent-light); transform: translateY(-3px); }
+
+        /* ===== WHATSAPP FLOAT ===== */
+        #whatsapp-float {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            background: #25D366;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+            box-shadow: 0 4px 20px rgba(37,211,102,0.3);
+            transition: 0.3s;
+            z-index: 999;
+        }
+        #whatsapp-float:hover { transform: scale(1.1); box-shadow: 0 6px 25px rgba(37,211,102,0.4); color: #fff; }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            body { padding-left: 0; }
+
+            main, section, footer {
+                margin-left: 0;
+            }
+
+            .nav-toggle-btn { display: flex; }
+
+            .nav-enclosure {
+                transform: translateX(-100%);
+                transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+            }
+
+            .nav-enclosure.open {
+                transform: translateX(0);
+            }
+
+            .playground-container {
+                grid-template-columns: 1fr;
+            }
+
+            section { padding: 60px 0; }
+            .hero { padding: 100px 20px 50px; }
+            .hero-content h1 { font-size: 28px; }
+            .hero-stats { gap: 16px; flex-wrap: wrap; }
+        }
+
+        @media (max-width: 480px) {
+            .teach-grid { grid-template-columns: 1fr; }
+            .blog-grid { grid-template-columns: 1fr; }
+            .nav-3d { width: 130px; }
+            .nav-enclosure { width: 160px; }
+            .nav-3d ul li a { font-size: 10px; padding: 8px 10px 8px 32px; min-height: 34px; }
+            .nav-3d ul li a .icon-strip { width: 26px; }
+            .nav-3d ul li a .icon-strip i { font-size: 10px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Mobile Nav Toggle -->
+    <button class="nav-toggle-btn" onclick="document.getElementById('navEnclosure').classList.toggle('open')">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- ===== 3D SIDEBAR NAV ===== -->
+    <div class="nav-enclosure" id="navEnclosure">
+        <div class="nav-3d">
+            <!-- Logo -->
+            <div class="nav-logo">
+                <a href="#" onclick="return showHome() || true">
+                    <img src="logo.png" alt="BWG" onerror="this.style.display='none'">
+                    Blaze<span>WebGuide</span>
+                </a>
+            </div>
+
+            <ul>
+                <li class="active" data-view="home">
+                    <a href="#" onclick="showHome(); document.getElementById('navEnclosure').classList.remove('open'); return false;">
+                        <span class="icon-strip"><i class="fas fa-home"></i></span>
+                        Home
+                        <span class="active-dot"></span>
+                    </a>
+                </li>
+                <li data-view="teach">
+                    <a href="#" onclick="showTeach(); document.getElementById('navEnclosure').classList.remove('open'); return false;">
+                        <span class="icon-strip"><i class="fas fa-graduation-cap"></i></span>
+                        Learn
+                        <span class="active-dot"></span>
+                    </a>
+                </li>
+                <li data-view="playground">
+                    <a href="#" onclick="showPlayground(); document.getElementById('navEnclosure').classList.remove('open'); return false;">
+                        <span class="icon-strip"><i class="fas fa-code"></i></span>
+                        Playground
+                        <span class="active-dot"></span>
+                    </a>
+                </li>
+                <li data-view="blog">
+                    <a href="#" onclick="showBlog(); document.getElementById('navEnclosure').classList.remove('open'); return false;">
+                        <span class="icon-strip"><i class="fas fa-newspaper"></i></span>
+                        Blog
+                        <span class="active-dot"></span>
+                    </a>
+                </li>
+                <li data-view="about">
+                    <a href="#" onclick="showPage('about'); document.getElementById('navEnclosure').classList.remove('open'); return false;">
+                        <span class="icon-strip"><i class="fas fa-user"></i></span>
+                        About
+                        <span class="active-dot"></span>
+                    </a>
+                </li>
+                <li data-view="privacy">
+                    <a href="#" onclick="showPage('privacy'); document.getElementById('navEnclosure').classList.remove('open'); return false;">
+                        <span class="icon-strip"><i class="fas fa-shield-halved"></i></span>
+                        Privacy
+                        <span class="active-dot"></span>
+                    </a>
+                </li>
+                <li data-view="terms">
+                    <a href="#" onclick="showPage('terms'); document.getElementById('navEnclosure').classList.remove('open'); return false;">
+                        <span class="icon-strip"><i class="fas fa-file-contract"></i></span>
+                        Terms
+                        <span class="active-dot"></span>
+                    </a>
+                </li>
+            </ul>
+
+            <!-- Theme Toggle at bottom of nav -->
+            <div class="nav-theme-toggle">
+                <button onclick="toggleTheme()" id="themeBtn" title="Toggle theme">
+                    <i class="fas fa-moon"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== CONTENT AREA ===== -->
+
+    <!-- LEARN PAGE -->
+    <section id="teachView" style="display:none;padding-top:100px;">
+        <div class="container">
+            <p class="section-label">Curriculum</p>
+            <h2 class="section-title">What We Teach</h2>
+            <div class="teach-grid">
+                <div class="teach-card">
+                    <div class="icon"><i class="fab fa-html5"></i></div>
+                    <h4>HTML</h4>
+                    <p>Structure your web pages with semantic markup, forms, tables, and multimedia.</p>
+                </div>
+                <div class="teach-card">
+                    <div class="icon"><i class="fab fa-css3-alt"></i></div>
+                    <h4>CSS</h4>
+                    <p>Style with Flexbox, Grid, animations, responsive design, and modern layouts.</p>
+                </div>
+                <div class="teach-card">
+                    <div class="icon"><i class="fab fa-js"></i></div>
+                    <h4>JavaScript</h4>
+                    <p>DOM manipulation, events, fetch API, and building interactive web features.</p>
+                </div>
+                <div class="teach-card">
+                    <div class="icon"><i class="fas fa-server"></i></div>
+                    <h4>DevOps</h4>
+                    <p>Deploy sites on Vercel, manage DNS, SSL, Google Search Console, and monetize.</p>
+                </div>
+            </div>
+
+            <div class="teach-topics">
+                <div class="teach-topic">
+                    <h4>📄 HTML & Structure</h4>
+                    <p>Learn how to build proper web page structure from scratch. Headings, paragraphs, links, images, lists, tables, forms, semantic tags, and accessibility basics.</p>
+                    <div class="tags"><span>HTML5</span><span>SEO Structure</span><span>Forms</span><span>Accessibility</span></div>
+                </div>
+                <div class="teach-topic">
+                    <h4>🎨 CSS & Styling</h4>
+                    <p>Master modern CSS — flexbox, grid, custom properties, animations, transitions, responsive breakpoints, and dark/light themes.</p>
+                    <div class="tags"><span>Flexbox</span><span>Grid</span><span>Animations</span><span>Responsive</span><span>Variables</span></div>
+                </div>
+                <div class="teach-topic">
+                    <h4>⚡ JavaScript</h4>
+                    <p>Interactive websites with vanilla JS. Events, DOM APIs, local storage, fetch, async/await, and building real components.</p>
+                    <div class="tags"><span>DOM</span><span>Events</span><span>Fetch API</span><span>ES6+</span></div>
+                </div>
+                <div class="teach-topic">
+                    <h4>🚀 Deployment</h4>
+                    <p>Go from code to live site. Git, GitHub, Vercel, custom domains, HTTPS, DNS records, and troubleshooting deployment issues.</p>
+                    <div class="tags"><span>Vercel</span><span>GitHub Pages</span><span>DNS</span><span>SSL</span><span>Monetization</span></div>
+                </div>
+                <div class="teach-topic">
+                    <h4>🔍 SEO & Performance</h4>
+                    <p>Get found on Google. Meta tags, sitemaps, robots.txt, Google Search Console, page speed optimization, and structured data.</p>
+                    <div class="tags"><span>Search Console</span><span>Sitemap</span><span>Meta Tags</span><span>Speed</span></div>
+                </div>
+                <div class="teach-topic">
+                    <h4>🛡️ Security & Best Practices</h4>
+                    <p>Secure your site. SSL setup, HTTPS enforcement, content security policy, form validation, and safe coding habits.</p>
+                    <div class="tags"><span>HTTPS</span><span>SSL</span><span>CSP</span><span>Validation</span></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PLAYGROUND -->
+    <section id="playgroundView" style="display:none;padding-top:100px;">
+        <div class="container">
+            <p class="section-label">Interactive</p>
+            <h2 class="section-title">Code Playground</h2>
+            <p style="text-align:center;color:var(--text-secondary);margin-bottom:25px;">Write HTML, CSS, and JavaScript — see the result live 👇</p>
+            <div class="playground-actions">
+                <button class="btn-sm" onclick="runPlayground()"><i class="fas fa-play" style="margin-right:6px;"></i>Run Code</button>
+                <button class="btn-sm-outline" onclick="resetPlayground()"><i class="fas fa-undo" style="margin-right:6px;"></i>Reset</button>
+            </div>
+            <div class="playground-container">
+                <div class="playground-editors">
+                    <div class="editor-box">
+                        <div class="editor-header"><span class="lang-label"><i class="fab fa-html5"></i> HTML</span></div>
+                        <textarea id="htmlInput" spellcheck="false"><div class="container">
+  <h1>Hello, BlazeWebGuide!</h1>
+  <p>Edit this code and see changes live.</p>
+  <button onclick="alert('You clicked!')">Click Me</button>
+</div></textarea>
+                    </div>
+                    <div class="editor-box">
+                        <div class="editor-header"><span class="lang-label"><i class="fab fa-css3-alt"></i> CSS</span></div>
+                        <textarea id="cssInput" spellcheck="false">body {
+  font-family: Arial, sans-serif;
+  background: #0b0f15;
+  color: #e2e8f0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  margin: 0;
+}
+.container {
+  text-align: center;
+  padding: 40px;
+}
+h1 { color: #3b82f6; }
+button {
+  padding: 12px 24px;
+  background: #3b82f6;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+}
+button:hover { background: #2563eb; }</textarea>
+                    </div>
+                    <div class="editor-box">
+                        <div class="editor-header"><span class="lang-label"><i class="fab fa-js"></i> JavaScript</span></div>
+                        <textarea id="jsInput" spellcheck="false">// JavaScript runs automatically
+console.log('BlazeWebGuide Playground ready!');</textarea>
+                    </div>
+                </div>
+                <div class="playground-output">
+                    <div class="output-header"><span><i class="fas fa-eye"></i> Output</span></div>
+                    <iframe id="playgroundFrame"></iframe>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- HOME -->
+    <main id="homeView">
+        <section class="hero">
+            <div class="hero-content">
+                <h1>Learn Web Dev.<br><span>The Real Way.</span></h1>
+                <p>No fluff. No fake promises. Just step-by-step tutorials on hosting, DNS, HTTPS, SEO, and monetization — from real deployments.</p>
+                <a href="#" onclick="showBlog()" class="btn-primary">Explore Tutorials <i class="fas fa-arrow-right" style="margin-left:8px;"></i></a>
+                <div class="hero-stats">
+                    <span><strong>7+</strong> Tutorials</span>
+                    <span><strong>100%</strong> Free</span>
+                    <span><strong>Real</strong> Solutions</span>
+                </div>
+            </div>
+        </section>
+
+        <section id="homeBlog" style="padding-top:0;">
+            <div class="container">
+                <p class="section-label">Latest</p>
+                <h2 class="section-title">Recent Tutorials</h2>
+                <div class="blog-grid" id="homeBlogGrid"></div>
+            </div>
+        </section>
+    </main>
+
+    <!-- BLOG LIST -->
+    <section id="blogView" style="display:none;padding-top:100px;">
+        <div class="container">
+            <p class="section-label">Knowledge Base</p>
+            <h2 class="section-title">All Tutorials</h2>
+            <div class="search-bar">
+                <input type="text" id="searchInput" placeholder="Search tutorials..." oninput="doSearch(this.value)">
+            </div>
+            <div class="category-filters" id="categoryFilters">
+                <button class="active" onclick="filterBlogs('all')">All</button>
+                <button onclick="filterBlogs('DNS')">DNS</button>
+                <button onclick="filterBlogs('SEO')">SEO</button>
+                <button onclick="filterBlogs('HTTPS')">HTTPS</button>
+                <button onclick="filterBlogs('Monetization')">Monetization</button>
+                <button onclick="filterBlogs('Domains')">Domains</button>
+                <button onclick="filterBlogs('Structure')">Structure</button>
+            </div>
+            <div class="blog-grid" id="blogGrid"></div>
+        </div>
+    </section>
+
+    <!-- BLOG DETAIL -->
+    <section id="blogDetail" style="display:none;padding-top:100px;">
+        <div class="container">
+            <div class="blog-detail visible" id="blogDetailContent"></div>
+        </div>
+    </section>
+
+    <!-- PAGES -->
+    <section id="pageView" style="display:none;padding-top:100px;">
+        <div class="container">
+            <div class="page-nav" id="pageNav"></div>
+            <div class="page-content" id="pageContent"></div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="social">
+            <a href="https://github.com/asonganyirandy143-spec" target="_blank"><i class="fab fa-github"></i></a>
+            <a href="https://www.instagram.com/randyblaze32" target="_blank"><i class="fab fa-instagram"></i></a>
+            <a href="mailto:asonganyirandy143@gmail.com"><i class="fas fa-envelope"></i></a>
+            <a href="https://whatsapp.com/channel/0029Vb73P9Z3gvWUosjnsB0T" target="_blank"><i class="fab fa-whatsapp"></i></a>
+        </div>
+        <p>© 2025 BlazeWebGuide. Built by <a href="#">Randy Blaze</a>.</p>
+    </footer>
+
+    <a id="whatsapp-float" href="https://whatsapp.com/channel/0029Vb73P9Z3gvWUosjnsB0T" target="_blank" title="Join our Channel">
+        <i class="fab fa-whatsapp"></i>
+    </a>
+
+    <script>
+        const tutorials = [
+            {
+                id: 'problem1', tag: 'DNS', title: 'Website Blocked as "Dynamic DNS"',
+                desc: 'How to fix your Vercel or GitHub Pages site being flagged as Dynamic DNS.',
+                content: `<h3>Why This Happens</h3><p>Some ISPs and firewalls flag Vercel/GitHub Pages subdomains as "Dynamic DNS" because they resolve to shared hosting IPs that change frequently.</p><h3>Solution</h3><ul><li>Use a <strong>custom domain</strong> (e.g., yourdomain.com) instead of the free subdomain</li><li>Add an <strong>A record</strong> pointing to Vercel's IP: 76.76.21.21</li><li>Add a <strong>CNAME record</strong> for www pointing to cname.vercel-dns.com</li><li>Wait for DNS propagation (up to 48 hours)</li></ul><pre># Example DNS config for Vercel\nA     @       76.76.21.21\nCNAME www    cname.vercel-dns.com</pre><p>Once the custom domain is active, the flag should disappear.</p>`
+            },
+            {
+                id: 'problem2', tag: 'SEO', title: 'Google Search Console Verification',
+                desc: 'Step-by-step guide to verify your site on Google Search Console.',
+                content: `<h3>Why Verify?</h3><p>Google Search Console lets you track search performance, fix indexing issues, and submit sitemaps.</p><h3>Methods</h3><ul><li><strong>HTML Tag:</strong> Add <code>&lt;meta name="google-site-verification" content="CODE"&gt;</code> to your head</li><li><strong>DNS Record:</strong> Add a TXT record to your domain provider</li><li><strong>HTML File:</strong> Upload the verification file to your site root</li></ul><p>The HTML tag method is fastest for static sites on Vercel or GitHub Pages.</p>`
+            },
+            {
+                id: 'problem3', tag: 'HTTPS', title: 'HTTPS Warnings Despite SSL',
+                desc: 'Fix mixed content warnings and SSL issues on your deployed site.',
+                content: `<h3>Common Causes</h3><ul><li>Loading HTTP resources (images, scripts, fonts) on an HTTPS page</li><li>Missing or expired SSL certificate</li><li>Hardcoded http:// URLs in your code</li></ul><h3>Fix</h3><ul><li>Use relative URLs (/image.png) or protocol-relative</li><li>Vercel and GitHub Pages provide automatic SSL via Let's Encrypt</li><li>Check your browser console for mixed content warnings</li></ul>`
+            },
+            {
+                id: 'problem4', tag: 'Monetization', title: 'Monetization Restrictions',
+                desc: 'How to get your site approved for ads and monetization platforms.',
+                content: `<h3>Requirements</h3><ul><li><strong>Original content</strong> — no copied material</li><li><strong>Privacy Policy</strong> and <strong>Terms of Service</strong> pages</li><li><strong>About page</strong> with author info</li><li><strong>SSL certificate</strong> (HTTPS)</li><li><strong>Working navigation</strong> — all links functional</li></ul><h3>Tips</h3><ul><li>Write at least 10-15 quality posts before applying</li><li>Add a contact page with email/social links</li><li>Submit your sitemap to Google Search Console</li></ul>`
+            },
+            {
+                id: 'problem5', tag: 'Domains', title: 'Custom Domain on GitHub Pages',
+                desc: 'Connect your own domain to a GitHub Pages site without issues.',
+                content: `<h3>Steps</h3><ol><li>Go to your repo Settings > Pages</li><li>Enter your custom domain under "Custom domain"</li><li>Add a CNAME file with your domain in the repo root</li><li>At your DNS provider add:<pre>A     @        185.199.108.153\nA     @        185.199.109.153\nA     @        185.199.110.153\nA     @        185.199.111.153\nCNAME www      yourusername.github.io</pre></li><li>Check "Enforce HTTPS" after DNS propagates</li></ol>`
+            },
+            {
+                id: 'problem6', tag: 'SEO', title: 'SEO Optimization Guide',
+                desc: 'Practical SEO tips to rank higher on Google with your static site.',
+                content: `<h3>On-Page SEO</h3><ul><li>Use descriptive title tags (50-60 chars)</li><li>Write unique meta descriptions (150-160 chars)</li><li>Use heading tags in proper order</li><li>Add alt text to all images</li><li>Use semantic HTML (article, section, nav)</li></ul><h3>Technical SEO</h3><ul><li>Submit sitemap.xml to Google Search Console</li><li>Create robots.txt for crawler guidance</li><li>Ensure fast load times</li><li>Use canonical URLs</li></ul>`
+            },
+            {
+                id: 'problem7', tag: 'Structure', title: 'Static Site Folder Structure',
+                desc: 'The recommended folder structure for organized static site deployment.',
+                content: `<h3>Recommended Structure</h3><pre>project/\n├── index.html\n├── blog.html\n├── about.html\n├── privacy.html\n├── terms.html\n├── style.css\n├── script.js\n├── logo.png\n├── favicon.png\n├── sitemap.xml\n└── robots.txt</pre><h3>Tips</h3><ul><li>Keep all files in the root for simplicity</li><li>Use a single style.css to avoid extra HTTP requests</li><li>Minify CSS/JS before deployment</li><li>Test all links after deployment</li></ul>`
+            }
+        ];
+
+        const pages = {
+            about: {
+                title: 'About BlazeWebGuide',
+                content: `<h2>Who We Are</h2><p>BlazeWebGuide is a free resource created by <strong>Randy Blaze</strong> — a self-taught developer who started from a phone and pure determination.</p><p>Every tutorial here comes from actual problems I solved, not theory.</p><h2>What We Cover</h2><ul><li>Web hosting & deployment (Vercel, GitHub Pages)</li><li>DNS configuration & custom domains</li><li>HTTPS, SSL, and security best practices</li><li>SEO and Google Search Console</li><li>Monetization & ad approval</li></ul><h2>Why Free?</h2><p>Because real knowledge should be accessible. No paywalls, no gatekeeping.</p>`
+            },
+            privacy: {
+                title: 'Privacy Policy',
+                content: `<h2>Information We Collect</h2><p>BlazeWebGuide does not collect, store, or share any personal data. This is a static site with no backend, no database, and no tracking scripts.</p><h2>Third-Party Services</h2><ul><li><strong>Vercel</strong> — hosting platform. See their privacy policy for data handling.</li><li><strong>Google Fonts</strong> — font delivery. May log IP addresses.</li><li><strong>Font Awesome</strong> — icon delivery via CDN.</li></ul><h2>Cookies</h2><p>We don't use cookies. Theme preference is stored in your browser's localStorage.</p><h2>Contact</h2><p>Questions? Reach out via email: asonganyirandy143@gmail.com</p>`
+            },
+            terms: {
+                title: 'Terms of Service',
+                content: `<h2>Use of Content</h2><p>All tutorials and content on BlazeWebGuide are provided for educational purposes. You may use, reference, and adapt the material freely.</p><h2>No Warranty</h2><p>Content is provided "as is" without any warranty. Always test configurations in a safe environment.</p><h2>External Links</h2><p>We link to third-party services (Vercel, GitHub, Google). We're not responsible for their content or practices.</p><h2>Changes</h2><p>These terms may be updated. Continued use after changes means acceptance.</p>`
+            }
+        };
+
+        let searchTerm = '';
+
+        // ===== VIEW CONTROL =====
+
+        function setNavActive(viewName) {
+            document.querySelectorAll('.nav-3d ul li').forEach(li => {
+                li.classList.toggle('active', li.dataset.view === viewName);
+            });
+        }
+
+        function showView(id) {
+            ['homeView','teachView','playgroundView','blogView','blogDetail','pageView'].forEach(v =>
+                document.getElementById(v).style.display = v === id ? 'block' : 'none'
+            );
+        }
+
+        function showHome() {
+            setNavActive('home');
+            showView('homeView');
+            renderBlogGrid('homeBlogGrid', tutorials.slice(0, 3));
+            renderBlogGrid('blogGrid', tutorials);
+            return false;
+        }
+
+        function showTeach() {
+            setNavActive('teach');
+            showView('teachView');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function showPlayground() {
+            setNavActive('playground');
+            showView('playgroundView');
+            setTimeout(runPlayground, 200);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function showBlog() {
+            setNavActive('blog');
+            showView('blogView');
+            renderBlogGrid('blogGrid', applySearch(tutorials));
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function showBlogDetail(id) {
+            const tut = tutorials.find(t => t.id === id);
+            if (!tut) return;
+            showView('blogDetail');
+            document.getElementById('blogDetailContent').innerHTML = `
+                <div class="back" onclick="showBlog()"><i class="fas fa-arrow-left"></i> Back to Tutorials</div>
+                <span class="tag">${tut.tag}</span>
+                <h2>${tut.title}</h2>
+                <div class="meta">BlazeWebGuide Tutorial</div>
+                ${tut.content}
+            `;
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function showPage(page) {
+            setNavActive(page);
+            showView('pageView');
+            document.getElementById('pageNav').innerHTML = Object.keys(pages).map(p =>
+                `<button class="${p === page ? 'active' : ''}" onclick="showPage('${p}')">${p.charAt(0).toUpperCase() + p.slice(1)}</button>`
+            ).join('');
+            document.getElementById('pageContent').innerHTML = `<h2 style="font-size:28px;margin-bottom:20px;">${pages[page].title}</h2>${pages[page].content}`;
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // ===== THEME =====
+
+        function toggleTheme() {
+            document.body.classList.toggle('light');
+            const btn = document.getElementById('themeBtn');
+            const icon = btn.querySelector('i');
+            if (document.body.classList.contains('light')) {
+                icon.className = 'fas fa-sun';
+            } else {
+                icon.className = 'fas fa-moon';
+            }
+            localStorage.setItem('bwgTheme', document.body.classList.contains('light') ? 'light' : 'dark');
+        }
+
+        // Restore theme
+        if (localStorage.getItem('bwgTheme') === 'light') {
+            document.body.classList.add('light');
+            const icon = document.getElementById('themeBtn')?.querySelector('i');
+            if (icon) icon.className = 'fas fa-sun';
+        }
+
+        // ===== SEARCH =====
+
+        function doSearch(val) {
+            searchTerm = val;
+            showBlog();
+        }
+
+        function applySearch(items) {
+            if (!searchTerm) return items;
+            const term = searchTerm.toLowerCase();
+            return items.filter(t =>
+                t.title.toLowerCase().includes(term) ||
+                t.desc.toLowerCase().includes(term) ||
+                t.tag.toLowerCase().includes(term)
+            );
+        }
+
+        function filterBlogs(tag) {
+            document.querySelectorAll('#blogGrid .blog-card').forEach(card => {
+                card.style.display = tag === 'all' || card.dataset.tag === tag ? 'block' : 'none';
+            });
+            document.querySelectorAll('#categoryFilters button').forEach(btn => {
+                btn.classList.toggle('active', btn.textContent === 'All' && tag === 'all' || btn.textContent === tag);
+            });
+        }
+
+        // ===== PLAYGROUND =====
+        function runPlayground() {
+            const html = document.getElementById('htmlInput').value;
+            const css = document.getElementById('cssInput').value;
+            const js = document.getElementById('jsInput').value;
+
+            const frame = document.getElementById('playgroundFrame');
+            const doc = frame.contentDocument || frame.contentWindow.document;
+            doc.open();
+            doc.write(`
+                <!DOCTYPE html>
+                <html>
+                <head><style>${css}</style></head>
+                <body>
+                    ${html}
+                    <script>${js}<\/script>
+                </body>
+                </html>
+            `);
+            doc.close();
+        }
+
+        function resetPlayground() {
+            const defaults = {
+                htmlInput: `<div class="container">\n  <h1>Hello, BlazeWebGuide!</h1>\n  <p>Edit this code and see changes live.</p>\n  <button onclick="alert('You clicked!')">Click Me</button>\n</div>`,
+                cssInput: `body {\n  font-family: Arial, sans-serif;\n  background: #0b0f15;\n  color: #e2e8f0;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  min-height: 100vh;\n  margin: 0;\n}\n.container {\n  text-align: center;\n  padding: 40px;\n}\nh1 { color: #3b82f6; }\nbutton {\n  padding: 12px 24px;\n  background: #3b82f6;\n  color: #fff;\n  border: none;\n  border-radius: 8px;\n  cursor: pointer;\n  font-size: 16px;\n}\nbutton:hover { background: #2563eb; }`,
+                jsInput: `// JavaScript runs automatically\nconsole.log('BlazeWebGuide Playground ready!');`
+            };
+            Object.keys(defaults).forEach(id => document.getElementById(id).value = defaults[id]);
+            runPlayground();
+        }
+
+        function renderBlogGrid(id, items) {
+            document.getElementById(id).innerHTML = items.map(t => `
+                <div class="blog-card" onclick="showBlogDetail('${t.id}')" data-tag="${t.tag}">
+                    <span class="tag">${t.tag}</span>
+                    <h3>${t.title}</h3>
+                    <p>${t.desc}</p>
+                    <span class="read-more">Read More <i class="fas fa-arrow-right"></i></span>
+                </div>
+            `).join('');
+        }
+
+        // ===== INIT =====
+        document.addEventListener('DOMContentLoaded', () => {
+            showHome();
+            setTimeout(runPlayground, 500);
+        });
+    </script>
+</body>
+</html>
