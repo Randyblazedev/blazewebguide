@@ -135,8 +135,9 @@ body { font-family:'Inter',sans-serif; background:var(--bg); color:var(--text); 
 .ai-input-area input { flex:1; padding:10px 14px; border-radius:8px; border:1px solid var(--border); background:var(--card); color:var(--text); font-size:13px; font-family:inherit; outline:none; }
 .ai-input-area input:focus { border-color:var(--accent); }
 .ai-input-area .send-btn { width:38px; height:38px; border-radius:8px; border:none; background:var(--accent); color:#fff; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:16px; transition:all 0.2s; }
-@media(max-width:768px){ .sidebar { width:220px; } .content-area { padding:20px; } .level-cards { grid-template-columns:1fr; } .hero-section h1 { font-size:28px; } .stats { gap:20px; } }
-@media(max-width:640px){ .sidebar { display:none; } .sidebar.mobile-open { display:flex; position:fixed; inset:0; z-index:50; width:100%; } .ai-panel { width:calc(100vw-32px); right:16px; bottom:80px; height:60vh; } }
+@media(max-width:768px){ .sidebar { width:220px; } .content-area { padding:20px; } .level-cards { grid-template-columns:1fr; } .hero-section h1 { font-size:28px; } .stats { gap:20px; } .lesson-page { padding:0 4px; } .lesson-body { font-size:14px; } .lesson-body pre { font-size:12px; } .top-bar { padding:10px 12px; gap:8px; } .search-box { max-width:100%; } .search-box input { font-size:12px; padding:6px 10px 6px 30px; } .top-btn { font-size:11px; padding:5px 10px; } }
+@media(max-width:640px){ body { padding:0; } .app-container { flex-direction:column; } .sidebar { display:none; width:100%; } .sidebar.mobile-open { display:flex; position:fixed; inset:0; z-index:50; width:100%; } .sidebar.mobile-open .sidebar-nav { padding:12px; } .main-content { width:100%; } .content-area { padding:12px; } .hero-section { padding:30px 0 20px; } .hero-section h1 { font-size:24px; } .stats { gap:12px; flex-wrap:wrap; } .stat-num { font-size:22px; } .level-card { padding:16px; } .level-card h3 { font-size:16px; } .level-card p { font-size:12px; } .lesson-page { padding:0; } .lesson-header h1 { font-size:22px; } .lesson-body { font-size:14px; line-height:1.6; } .lesson-body pre { font-size:11px; padding:10px; } .lesson-actions { flex-direction:column; gap:8px; } .btn { width:100%; text-align:center; } .cert-card { padding:24px 16px; } .cert-card h2 { font-size:20px; } .ai-panel { width:calc(100vw - 32px); right:16px; bottom:80px; height:55vh; } .ai-trigger { bottom:16px; right:16px; width:48px; height:48px; font-size:18px; } .top-bar .top-actions .top-btn { font-size:10px; padding:4px 8px; } #mobileMenuBtn { display:inline-flex !important; } }
+@media(max-width:480px){ .hero-section h1 { font-size:20px; } .stats .stat-item { min-width:80px; } .stats .stat-num { font-size:18px; } .level-cards { gap:10px; } }
 </style>
 </head>
 <body>
@@ -156,6 +157,7 @@ body { font-family:'Inter',sans-serif; background:var(--bg); color:var(--text); 
   </aside>
   <main class="main-content">
     <div class="top-bar">
+      <button class="top-btn" id="mobileMenuBtn" onclick="toggleMobileSidebar()" style="display:none;">☰</button>
       <div class="search-box">
         <span class="icon">🔍</span>
         <input type="text" id="searchInput" placeholder="Search any lesson..." oninput="handleSearch(this.value)">
@@ -350,6 +352,9 @@ function removeTyping(id){const e=document.getElementById(id);if(e)e.remove();}
 const defaultHTML = '<!DOCTYPE html><html><head><style>body{font-family:system-ui;display:flex;justify-content:center;align-items:center;min-height:100vh;margin:0;background:#0f172a;color:#fff;}.card{background:#1e293b;padding:32px;border-radius:16px;text-align:center;}h1{color:#818cf8;}button{background:#6366f1;color:#fff;border:none;padding:10px 24px;border-radius:8px;cursor:pointer;font-size:16px;margin-top:16px;}button:hover{background:#818cf8;}</style></head><body><div class="card"><h1>🚀 BlazeWebGuide</h1><p>Edit this code and see changes live!</p><button onclick="alert(\'Hello from BlazeWebGuide!\')">Click Me</button></div></body></html>';
 
 // Init
+function toggleMobileSidebar() {
+  document.getElementById('sidebar').classList.toggle('mobile-open');
+}
 function init(){
   if(typeof CURRICULUM==='undefined'){document.getElementById('contentArea').innerHTML='<div style="text-align:center;padding:80px"><h2>Loading...</h2></div>';setTimeout(init,500);return;}
   renderAll();
