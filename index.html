@@ -276,7 +276,10 @@ function renderLes() {
             <h1>${l.title}</h1>
             <div class="meta">${l.duration||'10 min'} · ${d?'✅ Completed':'Not completed'}</div>
             <div class="body">${l.content||'<p>Content coming soon.</p>'}</div>`;
-          if(code) html += `<div style="margin:16px 0;"><h3 style="font-size:14px;font-weight:600;margin-bottom:8px;color:var(--accent2)">📝 Example</h3><pre><code>${code}</code></pre></div>`;
+          if(code) {
+            html += `<div style="margin:16px 0;"><h3 style="font-size:14px;font-weight:600;margin-bottom:8px;color:var(--accent2)">📝 Example</h3><pre><code>${code}</code></pre>`;
+            html += `<div style="margin-top:8px;border:1px solid var(--border);border-radius:6px;overflow:hidden;"><iframe srcdoc="${escAttr(l.codeExample)}" style="width:100%;height:180px;border:none;background:#fff;"></iframe></div></div>`;
+          }
           html += `${l.challenge?`<div class="challenge" style="cursor:pointer;" onclick="startChallenge('${l.id}')">
             <strong>🎯 Mini Challenge — Tap to solve</strong>
             <p>${l.challenge}</p>
@@ -284,7 +287,8 @@ function renderLes() {
           </div>`:''}
             <div class="les-act">
               <button class="btn ${d?'btn-g':'btn-p'}" onclick="togLes('${l.id}')">${d?'✓ Done':'Mark Complete'}</button>
-              <button class="btn btn-g" onclick="goLvl('${lid}')">← Back</button>
+              ${d?`<button class="btn btn-p" onclick="goNextLes()">Next Lesson →</button>`:''}
+              <button class="btn btn-g" onclick="goLvl('${lid}')">← Back to Level</button>
             </div>
           </div>`;
           document.getElementById('mainContent').innerHTML = html;
@@ -347,10 +351,10 @@ function submitCode() {
   
   const feed=document.getElementById('chalFeedback');
   if(pass){
-    feed.innerHTML='<span style="color:var(--green);font-weight:600;">✅ Challenge passed! Lesson completed!</span>';
+    feed.innerHTML='<span style="color:var(--green);font-weight:600;">✅ Challenge passed! Moving to next lesson...</span>';
     const p=prog(); p[chalId]=true; save(p);
     if(USER) fetch(API+'/api/complete',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:USER,lessonId:chalId,code})}).catch(()=>{});
-    renderLes();
+    setTimeout(goNextLes, 800);
   } else {
     feed.innerHTML='<span style="color:var(--amber);">⚠️ '+fb.join(' ')+' Fix and submit again.</span>';
   }
@@ -398,6 +402,28 @@ function viewCert(id) {
 
 function showHome() { VIEW='home';LVL=null;LES=null;render(); }
 function goLvl(id) { LVL=id;MOD=null;LES=null;VIEW='level';render(); }
+function goNextLes() {
+  // Find current lesson position
+  for(const lid of Object.keys(CURRICULUM)) {
+    const lvl=CURRICULUM[lid];
+    for(let mi=0;mi<lvl.modules.length;mi++) {
+      const mod=lvl.modules[mi];
+      for(let li=0;li<mod.lessons.length;li++) {
+        if(mod.lessons[li].id===LES) {
+          // Go to next lesson
+          if(li+1<mod.lessons.length) {
+            MOD=mod.id; LES=mod.lessons[li+1].id; VIEW='lesson'; render();
+          } else if(mi+1<lvl.modules.length) {
+            MOD=lvl.modules[mi+1].id; LES=lvl.modules[mi+1].lessons[0].id; VIEW='lesson'; render();
+          } else {
+            goLvl(lid);
+          }
+          return;
+        }
+      }
+    }
+  }
+}
 function togMod(id) { MOD=MOD===id?null:id;renderLevel(); }
 function openLes(mid,lid) { MOD=mid;LES=lid;VIEW='lesson';render(); }
 function showProfile() { VIEW='profile';render(); }
@@ -435,6 +461,7 @@ function doSearch(q) {
 }
 
 function esc(s) { if(!s)return'';return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function escAttr(s) { if(!s)return'';return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
 function init() {
   if(typeof CURRICULUM==='undefined'){document.getElementById('mainContent').innerHTML='<div style="text-align:center;padding:80px;color:var(--text2)">Loading...</div>';setTimeout(init,200);return;}
