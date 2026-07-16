@@ -156,9 +156,7 @@ function renderHome(){
 function showHome(){VIEW='home';LVL=null;LES=null;render()}
 function showAuth(){
   if(USER){
-    var o=document.createElement('div');o.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:100;display:flex;align-items:center;justify-content:center';
-    o.innerHTML='<div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:28px;max-width:360px;width:90%;text-align:center"><h2 style="font-size:18px;font-weight:700;margin-bottom:6px">Logged in as '+USER+'</h2><p style="font-size:13px;color:var(--text2);margin-bottom:16px">Continue where you left off!</p><button onclick="this.parentElement.parentElement.remove()" style="width:100%;padding:10px;border-radius:8px;border:none;background:var(--accent);color:#fff;cursor:pointer;font-size:14px;font-weight:500;margin-bottom:6px">Continue Learning</button><button onclick="localStorage.removeItem(\'bwg_user\');USER=null;this.parentElement.parentElement.remove();render()" style="width:100%;padding:8px;border:none;background:transparent;color:var(--red);cursor:pointer;font-size:12px">Sign Out</button></div>';
-    document.body.appendChild(o);
+    showProfile();
     return;
   }
   var o=document.createElement('div');o.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:100;display:flex;align-items:center;justify-content:center';
@@ -294,9 +292,10 @@ function renderProfile(){
   const names={beginner:'Beginner',intermediate:'Intermediate',advanced:'Advanced',pro:'Pro'};
   let total=0;Object.values(CURRICULUM).forEach(l=>l.modules.forEach(m=>total+=m.lessons.length));
   let doneC=0;Object.values(PROGRESS).forEach(v=>{if(v)doneC++});
-  let html='<div style="max-width:500px;margin:0 auto;text-align:center"><div style="width:48px;height:48px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:22px;margin:0 auto 8px">👤</div><h2 style="font-size:18px;font-weight:700">Your Progress</h2><p style="font-size:13px;color:var(--text2);margin-bottom:16px">'+doneC+'/'+total+' completed</p>';
+  let html='<div style="max-width:500px;margin:0 auto;text-align:center"><div style="width:48px;height:48px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:22px;margin:0 auto 8px">👤</div><h2 style="font-size:18px;font-weight:700">'+(USER||'Guest')+'</h2><p style="font-size:13px;color:var(--text2);margin-bottom:16px">'+doneC+'/'+total+' completed</p>';
   keys.forEach(k=>{const x=lvlP(k);html+='<div style="display:flex;align-items:center;gap:10px;padding:10px 14px;border:1px solid var(--border);border-radius:8px;margin-bottom:6px;background:var(--card)"><span style="width:7px;height:7px;border-radius:50%;background:'+colors[k]+';flex-shrink:0"></span><span style="flex:1;font-size:13px">'+names[k]+(lvlDone(k)?' ✅':'')+(lvlUnlocked(k)?'':' 🔒')+'</span><span style="font-size:12px;color:var(--text2)">'+x.d+'/'+x.t+'</span><div style="width:50px;height:4px;background:rgba(255,255,255,.05);border-radius:2px"><div style="height:100%;width:'+x.p+'%;background:'+colors[k]+';border-radius:2px"></div></div></div>';});
-  html+='<button class="btn btn-g" onclick="showHome()" style="margin-top:12px">← Back</button></div>';
+  if(USER)html+='<button class="btn btn-g" onclick="localStorage.removeItem(\'bwg_user\');USER=null;render()" style="margin-top:12px;color:var(--amber)">Sign Out</button>';
+  html+='<button class="btn btn-g" onclick="showHome()" style="margin-top:8px">← Back</button></div>';
   document.getElementById('content').innerHTML=html;
 }
 
