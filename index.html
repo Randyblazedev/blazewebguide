@@ -510,27 +510,20 @@ function loadMonaco(cb) {
 
 // Load curriculum asynchronously
 function loadCurriculum() {
-  var xhr=new XMLHttpRequest();
-  xhr.open('GET','curriculum.js',true);
-  xhr.onload=function(){
-    try{
-      // Use indirect eval in global scope
-      window.CURRICULUM=null;
-      var scr=xhr.responseText;
-      // Extract just the data part
-      var start=scr.indexOf('{');
-      var end=scr.lastIndexOf('}');
-      if(start>=0&&end>start){
-        window.CURRICULUM=JSON.parse(scr.substring(start,end+1));
+  fetch('curriculum.js').then(r=>r.text()).then(t=>{
+    try {
+      // Find the JSON object: from first { to matching last }
+      var start=t.indexOf('{');
+      var depth=0, end=-1;
+      for(var i=start;i<t.length;i++){
+        if(t[i]==='{') depth++;
+        else if(t[i]==='}') { depth--; if(depth===0) { end=i; break; } }
       }
-    }catch(e){}
-    if(window.CURRICULUM) render();
-    else document.getElementById('mainContent').innerHTML='<div style="text-align:center;padding:80px;color:var(--text2)"><h2>Failed to load</h2><button class="btn btn-p" onclick="location.reload()" style="margin-top:12px">Retry</button></div>';
-  };
-  xhr.onerror=function(){
-    document.getElementById('mainContent').innerHTML='<div style="text-align:center;padding:80px;color:var(--text2)"><h2>Network error</h2><button class="btn btn-p" onclick="location.reload()" style="margin-top:12px">Retry</button></div>';
-  };
-  xhr.send();
+      if(end>start) window.CURRICULUM=JSON.parse(t.substring(start,end+1));
+    } catch(e) { try { eval(t); } catch(e2) {} }
+    if(window.CURRICULUM&&window.CURRICULUM.beginner) render();
+    else document.getElementById('mainContent').innerHTML='<div style="text-align:center;padding:80px"><h2>Loading failed</h2><button class="btn btn-p" onclick="location.reload()" style="margin-top:12px">Retry</button></div>';
+  }).catch(function(){document.getElementById('mainContent').innerHTML='<div style="text-align:center;padding:80px"><h2>Network error</h2><button class="btn btn-p" onclick="location.reload()" style="margin-top:12px">Retry</button></div>';});
 }
 
 function init() {
