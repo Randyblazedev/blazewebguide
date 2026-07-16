@@ -324,24 +324,35 @@ function renderCert(){
 
 function showLevelCert(level){
   const names={beginner:'Beginner',intermediate:'Intermediate',advanced:'Advanced',pro:'Pro'};
+  const descs={beginner:'HTML, CSS, JavaScript, Git',intermediate:'Responsive Design, APIs, ES6+, Deployment',advanced:'React, Node.js, Databases, Testing',pro:'System Design, Security, DevOps, Architecture'};
   const colors={beginner:'#22c55e',intermediate:'#3b82f6',advanced:'#f59e0b',pro:'#ef4444'};
-  const x=lvlP(level);
   if(!lvlDone(level)){showCert();return;}
-  var num = Math.floor(Math.random()*900000000+100000000);
-  var today=new Date();
-  var dateStr=today.toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
-  document.getElementById('content').innerHTML='<div style="max-width:700px;margin:0 auto;padding:20px 0"><div style="background:linear-gradient(135deg,'+colors[level]+'11,'+colors[level]+'22);border:2px solid '+colors[level]+';border-radius:16px;padding:48px 32px;text-align:center;position:relative;overflow:hidden"><div style="position:absolute;top:-40px;right:-40px;width:120px;height:120px;border-radius:50%;background:'+colors[level]+'11;border:2px dashed '+colors[level]+'44"></div><div style="position:absolute;bottom:-30px;left:-30px;width:80px;height:80px;border-radius:50%;background:'+colors[level]+'11;border:2px dashed '+colors[level]+'44"></div>'+
-    '<div style="width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,'+colors[level]+','+colors[level]+'88);display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 16px;box-shadow:0 4px 16px '+colors[level]+'44">🏆</div>'+
-    '<h1 style="font-size:24px;font-weight:800;letter-spacing:-.5px;margin-bottom:4px">Certificate of Completion</h1>'+
-    '<div style="width:60px;height:2px;background:'+colors[level]+';margin:12px auto"></div>'+
-    '<p style="font-size:14px;color:var(--text2);margin-bottom:4px">This certifies that</p>'+
-    '<h2 style="font-size:28px;font-weight:900;margin-bottom:4px">'+(USER||'Learner')+'</h2>'+
-    '<p style="font-size:14px;color:var(--text2);margin-bottom:16px">has successfully completed the</p>'+
-    '<h3 style="font-size:18px;font-weight:700;color:'+colors[level]+'">'+names[level]+' Level</h3>'+
-    '<p style="font-size:13px;color:var(--text2);margin-top:4px;margin-bottom:16px">of the BlazeWebGuide Web Development Curriculum</p>'+
-    '<div style="width:60px;height:2px;background:'+colors[level]+';margin:12px auto"></div>'+
-    '<div style="display:flex;justify-content:center;gap:40px;font-size:12px;color:var(--text2)"><div><div style="font-weight:600;color:var(--text)">Date</div><div>'+dateStr+'</div></div><div><div style="font-weight:600;color:var(--text)">Certificate ID</div><div>BWG-'+num+'</div></div><div><div style="font-weight:600;color:var(--text)">Level</div><div>'+names[level]+'</div></div></div>'+
-    '<div style="display:flex;gap:10px;justify-content:center;margin-top:24px"><button class="btn btn-p" onclick="window.print()" style="font-size:13px">🖨 Print</button><button class="btn btn-g" onclick="showCert()" style="font-size:13px">← Back</button></div></div></div>';
+  var num=Math.floor(Math.random()*900000000+100000000);
+  var d=new Date();var ds=d.toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+  var html='<div style="max-width:750px;margin:0 auto;padding:20px 0"><div style="background:linear-gradient(135deg,#0a0c10,#111318);border:2px solid '+colors[level]+';border-radius:16px;padding:48px 40px;text-align:center;position:relative;overflow:hidden">'+
+    '<div style="position:absolute;top:-50px;right:-50px;width:150px;height:150px;border-radius:50%;background:'+colors[level]+'08;border:2px dashed '+colors[level]+'22"></div>'+
+    '<div style="position:absolute;bottom:-40px;left:-40px;width:100px;height:100px;border-radius:50%;background:'+colors[level]+'08;border:2px dashed '+colors[level]+'22"></div>'+
+    '<div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:200px;font-weight:900;color:'+colors[level]+'04;pointer-events:none">B</div>'+
+    '<div style="width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,'+colors[level]+','+colors[level]+'88);display:flex;align-items:center;justify-content:center;font-size:32px;margin:0 auto 16px;box-shadow:0 6px 20px '+colors[level]+'44;position:relative;z-index:1">🏆</div>'+
+    '<h1 style="font-size:22px;font-weight:800;letter-spacing:-.5px;position:relative;z-index:1">Certificate of Completion</h1>'+
+    '<div style="width:50px;height:2px;background:'+colors[level]+';margin:12px auto;position:relative;z-index:1"></div>'+
+    '<p style="font-size:13px;color:var(--text2);margin-bottom:4px;position:relative;z-index:1">This certifies that</p>'+
+    '<h2 style="font-size:30px;font-weight:900;margin-bottom:4px;position:relative;z-index:1">'+(USER||'Learner')+'</h2>'+
+    '<p style="font-size:13px;color:var(--text2);margin-bottom:12px;position:relative;z-index:1">has successfully completed the</p>'+
+    '<h3 style="font-size:20px;font-weight:700;color:'+colors[level]+';position:relative;z-index:1">'+names[level]+' Level</h3>'+
+    '<p style="font-size:12px;color:var(--text2);margin-top:2px;margin-bottom:12px;position:relative;z-index:1">'+descs[level]+'</p>'+
+    '<p style="font-size:12px;color:var(--text2);margin-bottom:16px;position:relative;z-index:1">of the BlazeWebGuide Web Development Curriculum</p>'+
+    '<div style="width:50px;height:2px;background:'+colors[level]+';margin:12px auto;position:relative;z-index:1"></div>'+
+    '<div style="display:flex;justify-content:center;gap:32px;font-size:11px;color:var(--text2);position:relative;z-index:1">'+
+    '<div><div style="font-weight:600;color:var(--text);margin-bottom:2px">Issued By</div><div>BlazeWebGuide</div></div>'+
+    '<div><div style="font-weight:600;color:var(--text);margin-bottom:2px">Date</div><div>'+ds+'</div></div>'+
+    '<div><div style="font-weight:600;color:var(--text);margin-bottom:2px">Certificate ID</div><div>BWG-'+num+'</div></div>'+
+    '<div><div style="font-weight:600;color:var(--text);margin-bottom:2px">Verify at</div><div>blazewebguide.vercel.app</div></div>'+
+    '</div>'+
+    '<div style="display:flex;gap:10px;justify-content:center;margin-top:24px;position:relative;z-index:1">'+
+    '<button class="btn btn-p" onclick="window.print()" style="font-size:13px">🖨 Print Certificate</button>'+
+    '<button class="btn btn-g" onclick="showCert()" style="font-size:13px">← Back</button></div></div></div>';
+  document.getElementById('content').innerHTML=html;
 }
 
 function toggleAI(){var p=document.getElementById('aiPanel');p.classList.toggle('o');if(p.classList.contains('o'))document.getElementById('aiInp').focus()}
