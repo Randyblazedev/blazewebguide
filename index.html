@@ -322,13 +322,21 @@ function renderCert(){
   document.getElementById('content').innerHTML=html;
 }
 
+function saveCert(level,certId){
+  if(!USER) return;
+  fetch(API+'/api/cert/save',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:USER,level,certId,name:USER})}).catch(function(){});
+}
+
 function showLevelCert(level){
   const names={beginner:'Beginner',intermediate:'Intermediate',advanced:'Advanced',pro:'Pro'};
   const descs={beginner:'HTML, CSS, JavaScript, Git',intermediate:'Responsive Design, APIs, ES6+, Deployment',advanced:'React, Node.js, Databases, Testing',pro:'System Design, Security, DevOps, Architecture'};
   const colors={beginner:'#22c55e',intermediate:'#3b82f6',advanced:'#f59e0b',pro:'#ef4444'};
   if(!lvlDone(level)){showCert();return;}
   var num=Math.floor(Math.random()*900000000+100000000);
+  var certId='BWG-'+num;
   var d=new Date();var ds=d.toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+  saveCert(level,certId);
+  var verifyUrl='https://blazewebguide.vercel.app/?verify='+certId;
   var isPro=level==='pro';
   var certBg=isPro?'linear-gradient(135deg,#0a0c10,#1a0a0a)':'linear-gradient(135deg,#0a0c10,#111318)';
   var certBorder=isPro?'3px solid gold':'2px solid '+colors[level];
@@ -352,9 +360,11 @@ function showLevelCert(level){
     '<div><div style="font-weight:600;color:var(--text);margin-bottom:2px">Certificate ID</div><div>BWG-'+num+'</div></div>'+
     '<div><div style="font-weight:600;color:var(--text);margin-bottom:2px">Verify at</div><div>blazewebguide.vercel.app</div></div>'+
     '</div>'+
-    '<div style="display:flex;gap:10px;justify-content:center;margin-top:24px;position:relative;z-index:1">'+
-    '<button class="btn btn-p" onclick="window.print()" style="font-size:13px">🖨 Print Certificate</button>'+
-    '<button class="btn btn-g" onclick="showCert()" style="font-size:13px">← Back</button></div></div></div>';
+    '<div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:24px;position:relative;z-index:1">'+
+    '<button class="btn btn-p" onclick="window.print()" style="font-size:13px">🖨 Print</button>'+
+    '<button class="btn btn-p" onclick="navigator.clipboard.writeText(\''+verifyUrl+'\').then(function(){alert(\''+verifyUrl+'\')})" style="font-size:13px;background:#22c55e">🔗 Copy Verify Link</button>'+
+    '<button class="btn btn-g" onclick="showCert()" style="font-size:13px">← Back</button></div>'+
+    '<div style="margin-top:12px;font-size:10px;color:var(--text2);position:relative;z-index:1">Verify at: '+verifyUrl+'</div></div></div>';
   document.getElementById('content').innerHTML=html;
 }
 
@@ -370,12 +380,28 @@ function sendAI(){
 }
 function esc(s){if(!s)return'';return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
 
+function showVerify(certId){
+  document.getElementById('content').innerHTML='<div style="text-align:center;padding:40px"><h2 style="font-size:20px;font-weight:700;margin-bottom:16px">🔍 Verifying...</h2><p style="color:var(--text2)">'+certId+'</p></div>';
+  fetch(API+'/api/cert/verify/'+certId).then(r=>r.json()).then(d=>{
+    if(d.valid){
+      const colors={beginner:'#22c55e',intermediate:'#3b82f6',advanced:'#f59e0b',pro:'#ef4444'};
+      document.getElementById('content').innerHTML='<div style="max-width:600px;margin:0 auto;text-align:center;padding:40px 0"><div style="width:64px;height:64px;border-radius:50%;background:var(--green);display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 16px">✅</div><h2 style="font-size:22px;font-weight:700">Valid Certificate</h2><p style="color:var(--text2);margin:8px 0"><strong>'+d.cert.name+'</strong></p><p style="color:var(--text2);font-size:13px">Completed the <strong>'+d.cert.level+'</strong> level of BlazeWebGuide</p><p style="color:var(--text2);font-size:12px;margin-top:4px">Issued on '+new Date(d.cert.date).toLocaleDateString()+'</p><p style="font-size:11px;color:var(--green);margin-top:12px">Certificate ID: '+certId+'</p><button class="btn btn-g" onclick="showHome()" style="margin-top:16px">← Back</button></div>';
+    } else {
+      document.getElementById('content').innerHTML='<div style="max-width:500px;margin:0 auto;text-align:center;padding:40px 0"><div style="width:64px;height:64px;border-radius:50%;background:var(--amber);display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 16px">❌</div><h2 style="font-size:22px;font-weight:700">Certificate Not Found</h2><p style="color:var(--text2);font-size:13px;margin-top:8px">No certificate matches '+certId+'</p><button class="btn btn-g" onclick="showHome()" style="margin-top:16px">← Back</button></div>';
+    }
+  }).catch(function(){
+    document.getElementById('content').innerHTML='<div style="text-align:center;padding:40px"><h2 style="font-size:20px;font-weight:700">Verification Unavailable</h2><p style="color:var(--text2);font-size:13px">Could not reach verification server.</p><button class="btn btn-g" onclick="showHome()" style="margin-top:16px">← Back</button></div>';
+  });
+}
+
 function init(){
+  var v=new URLSearchParams(window.location.search).get('verify');
+  if(v){VIEW='verify';setTimeout(function(){showVerify(v);},300);}
   if(typeof CURRICULUM==='undefined'||!CURRICULUM.beginner){
     document.getElementById('content').innerHTML='<p style="text-align:center;padding:40px">Loading...</p>';
     setTimeout(init,200);return;
   }
-  render();
+  if(!v)render();
 }
 init();
 </script>
