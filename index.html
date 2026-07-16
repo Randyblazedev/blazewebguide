@@ -3,321 +3,281 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BlazeWebGuide — Master Web Development</title>
-<script src="https://cdn.tailwindcss.com"></script>
+<title>BlazeWebGuide</title>
 <script src="curriculum.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<script>
-const API = 'https://ideas-pix-dom-sox.trycloudflare.com';
-let USER = localStorage.getItem('bwg_user');
-let LVL = null, MOD = null, LES = null, VIEW = 'home', PROGRESS = {};
-</script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg: #0a0c10; --surface: #111318; --card: #181b22; --border: rgba(99,102,241,0.12);
-  --text: #e2e8f0; --text2: #94a3b8; --accent: #6366f1; --accent2: #818cf8; --green: #22c55e;
-  --font: 'Inter',sans-serif; --code: 'JetBrains Mono',monospace;
+  --bg: #0a0c10;
+  --bg2: #111318;
+  --card: #181b22;
+  --border: #1e2230;
+  --text: #e2e8f0;
+  --text2: #64748b;
+  --accent: #6366f1;
+  --accent2: #818cf8;
+  --green: #22c55e;
+  --amber: #f59e0b;
+  --red: #ef4444;
+  --font: 'Inter', system-ui, sans-serif;
+  --radius: 12px;
+  --radius-sm: 8px;
 }
-* { margin:0; padding:0; box-sizing:border-box; }
-body { font-family:var(--font); background:var(--bg); color:var(--text); min-height:100vh; }
-::-webkit-scrollbar { width:6px; }
-::-webkit-scrollbar-track { background:transparent; }
-::-webkit-scrollbar-thumb { background:#2a2d3a; border-radius:3px; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { font-family: var(--font); background: var(--bg); color: var(--text); min-height: 100vh; line-height: 1.5; }
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-thumb { background: #2a2d3a; border-radius: 10px; }
 
 /* Layout */
-.app { display:flex; height:100vh; overflow:hidden; }
-.sidebar { width:240px; background:var(--surface); border-right:1px solid var(--border); flex-shrink:0; display:flex; flex-direction:column; }
-.sidebar-header { padding:16px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:10px; }
-.sidebar-header .logo { width:32px; height:32px; background:var(--accent); border-radius:8px; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:14px; color:#fff; }
-.sidebar-header h1 { font-size:14px; font-weight:700; }
-.sidebar-header h1 span { color:var(--accent2); }
-.sidebar-nav { flex:1; overflow-y:auto; padding:8px; }
-.nav-item { display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius:8px; cursor:pointer; transition:.2s; font-size:13px; color:var(--text2); margin-bottom:2px; }
-.nav-item:hover { background:rgba(99,102,241,0.08); color:var(--text); }
-.nav-item.active { background:rgba(99,102,241,0.12); color:var(--accent2); }
-.nav-item .dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
-.nav-item .badge { margin-left:auto; font-size:11px; opacity:.5; }
-.nav-item.locked { opacity:.4; cursor:not-allowed; }
+.app { display: flex; height: 100vh; }
+.sidebar { width: 230px; background: var(--bg2); border-right: 1px solid var(--border); display: flex; flex-direction: column; flex-shrink: 0; }
+.logo { padding: 20px 16px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px; }
+.logo-mark { width: 28px; height: 28px; background: var(--accent); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 12px; color: #fff; }
+.logo-text { font-size: 15px; font-weight: 700; }
+.logo-text span { color: var(--accent2); }
+.sidebar section { padding: 12px 8px; border-bottom: 1px solid var(--border); }
+.sidebar section:last-child { border-bottom: none; }
+.section-label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: var(--text2); padding: 0 8px; margin-bottom: 6px; }
+.nav-item { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: var(--radius-sm); cursor: pointer; font-size: 13px; color: var(--text2); transition: .15s; }
+.nav-item:hover { background: rgba(99,102,241,.08); color: var(--text); }
+.nav-item.active { background: rgba(99,102,241,.12); color: var(--accent2); }
+.nav-item .badge { margin-left: auto; font-size: 11px; opacity: .5; }
+.nav-item .dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
 
-.main { flex:1; display:flex; flex-direction:column; overflow:hidden; }
-.topbar { display:flex; align-items:center; gap:12px; padding:10px 20px; border-bottom:1px solid var(--border); background:rgba(10,12,16,.8); backdrop-filter:blur(12px); flex-shrink:0; }
-.topbar .search { flex:1; max-width:320px; position:relative; }
-.topbar .search input { width:100%; padding:7px 12px 7px 32px; border-radius:8px; border:1px solid var(--border); background:var(--surface); color:var(--text); font-size:13px; outline:none; }
-.topbar .search input:focus { border-color:var(--accent); }
-.topbar .search .icon { position:absolute; left:10px; top:50%; transform:translateY(-50%); font-size:13px; opacity:.4; }
-.topbar .btn { padding:6px 14px; border-radius:8px; border:1px solid var(--border); background:transparent; color:var(--text2); cursor:pointer; font-size:12px; transition:.2s; }
-.topbar .btn:hover { border-color:var(--accent); color:var(--text); background:rgba(99,102,241,.08); }
-.topbar .btn.primary { background:var(--accent); color:#fff; border:none; }
-.topbar .btn.primary:hover { background:var(--accent2); }
-.content { flex:1; overflow-y:auto; padding:24px 32px; }
+.main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+.topbar { display: flex; align-items: center; gap: 12px; padding: 0 24px; height: 56px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+.topbar .search { position: relative; flex: 1; max-width: 300px; }
+.topbar .search input { width: 100%; padding: 8px 12px 8px 32px; border-radius: var(--radius-sm); border: 1px solid var(--border); background: var(--bg2); color: var(--text); font-size: 13px; outline: 0; transition: .2s; }
+.topbar .search input:focus { border-color: var(--accent); }
+.topbar .search .icon { position: absolute; left: 10px; top: 8px; font-size: 14px; opacity: .4; }
+.topbar .actions { display: flex; gap: 8px; }
+.topbar .actions button { padding: 6px 14px; border-radius: var(--radius-sm); border: 1px solid var(--border); background: transparent; color: var(--text2); cursor: pointer; font-size: 12px; transition: .15s; }
+.topbar .actions button:hover { border-color: var(--accent); color: var(--text); }
+.topbar .actions .pri { background: var(--accent); color: #fff; border-color: var(--accent); }
+.topbar .actions .pri:hover { background: var(--accent2); }
+
+.content { flex: 1; overflow-y: auto; padding: 32px 48px; }
 
 /* Home */
-.home { max-width:800px; margin:0 auto; }
-.hero { text-align:center; padding:48px 0 32px; }
-.hero h1 { font-size:36px; font-weight:900; letter-spacing:-1px; line-height:1.1; margin-bottom:12px; }
-.hero h1 span { color:var(--accent2); }
-.hero p { font-size:15px; color:var(--text2); max-width:500px; margin:0 auto 24px; line-height:1.6; }
-.stats { display:flex; justify-content:center; gap:32px; margin-bottom:32px; }
-.stat { text-align:center; }
-.stat-num { font-size:24px; font-weight:800; }
-.stat-lbl { font-size:11px; color:var(--text2); margin-top:2px; }
-.grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:24px; }
-.card { padding:20px; border-radius:12px; border:1px solid var(--border); background:var(--card); cursor:pointer; transition:.3s; }
-.card:hover { transform:translateY(-2px); border-color:var(--accent); box-shadow:0 8px 24px rgba(99,102,241,.1); }
-.card .tag { display:inline-block; padding:3px 10px; border-radius:20px; font-size:10px; font-weight:600; margin-bottom:8px; }
-.card h3 { font-size:16px; font-weight:700; margin-bottom:4px; }
-.card p { font-size:12px; color:var(--text2); line-height:1.5; }
-.card .prog { margin-top:8px; font-size:11px; color:var(--text2); }
-.card.locked { opacity:.5; cursor:default; }
-.card.locked:hover { transform:none; border-color:var(--border); box-shadow:none; }
+.home { max-width: 720px; margin: 0 auto; }
+.hero { text-align: center; padding: 48px 0 32px; }
+.hero h1 { font-size: 40px; font-weight: 800; letter-spacing: -1.5px; line-height: 1.1; }
+.hero h1 span { color: var(--accent2); }
+.hero p { color: var(--text2); max-width: 480px; margin: 12px auto 28px; font-size: 15px; line-height: 1.6; }
+.stats { display: flex; justify-content: center; gap: 40px; margin-bottom: 36px; }
+.stat { text-align: center; }
+.stat-num { font-size: 28px; font-weight: 700; }
+.stat-lbl { font-size: 12px; color: var(--text2); margin-top: 2px; }
+.grid { display: grid; gap: 12px; }
+.grid-2 { grid-template-columns: 1fr 1fr; }
+.card { padding: 20px; border-radius: var(--radius); border: 1px solid var(--border); background: var(--card); cursor: pointer; transition: .2s; }
+.card:hover { border-color: rgba(99,102,241,.3); transform: translateY(-1px); }
+.card .badge { font-size: 11px; font-weight: 600; padding: 2px 10px; border-radius: 20px; display: inline-block; margin-bottom: 8px; }
+.card h3 { font-size: 16px; font-weight: 600; }
+.card .desc { font-size: 12px; color: var(--text2); margin-top: 4px; line-height: 1.5; }
+.card .bar-wrap { margin-top: 10px; height: 4px; background: rgba(255,255,255,.05); border-radius: 4px; overflow: hidden; }
+.card .bar-fill { height: 100%; border-radius: 4px; transition: width .5s; }
 
-/* Level View */
-.level-view { max-width:700px; margin:0 auto; }
-.lvl-header { display:flex; align-items:center; gap:12px; margin-bottom:20px; }
-.lvl-header .lvl-dot { width:12px; height:12px; border-radius:50%; flex-shrink:0; }
-.lvl-header h2 { font-size:20px; font-weight:800; }
-.lvl-header .lvl-prog { font-size:12px; color:var(--text2); }
-.mod { margin-bottom:8px; border:1px solid var(--border); border-radius:10px; overflow:hidden; }
-.mod-head { padding:12px 16px; cursor:pointer; display:flex; align-items:center; gap:10px; transition:.2s; }
-.mod-head:hover { background:rgba(255,255,255,.02); }
-.mod-head .arrow { font-size:10px; transition:.2s; flex-shrink:0; }
-.mod-head .arrow.open { transform:rotate(90deg); }
-.mod-head h4 { flex:1; font-size:13px; font-weight:600; }
-.mod-head .mod-prog { font-size:11px; color:var(--text2); }
-.mod-lessons { border-top:1px solid var(--border); }
-.les { padding:10px 16px 10px 36px; cursor:pointer; display:flex; align-items:center; gap:10px; font-size:12px; transition:.15s; border-left:2px solid transparent; }
-.les:hover { background:rgba(255,255,255,.03); }
-.les.active { border-left-color:var(--accent); background:rgba(99,102,241,.06); }
-.les .check { font-size:11px; width:16px; text-align:center; flex-shrink:0; }
-.les .check.done { color:var(--green); }
-.les .ttl { flex:1; }
-.les .dur { font-size:10px; color:var(--text2); }
+/* Level view */
+.lvl { max-width: 640px; margin: 0 auto; }
+.lvl-head { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; }
+.lvl-head .dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.lvl-head h2 { font-size: 20px; font-weight: 700; }
+.lvl-head .sub { font-size: 13px; color: var(--text2); margin-top: 2px; }
+.acc { border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; margin-bottom: 8px; }
+.acc-h { padding: 14px 16px; cursor: pointer; display: flex; align-items: center; gap: 10px; user-select: none; transition: .15s; }
+.acc-h:hover { background: rgba(255,255,255,.02); }
+.acc-h .arrow { font-size: 9px; color: var(--text2); transition: .2s; flex-shrink: 0; }
+.acc-h .arrow.o { transform: rotate(90deg); }
+.acc-h h4 { flex: 1; font-size: 13px; font-weight: 600; }
+.acc-h .count { font-size: 11px; color: var(--text2); }
+.acc-body { border-top: 1px solid var(--border); }
+.les { padding: 10px 16px 10px 36px; cursor: pointer; display: flex; align-items: center; gap: 10px; font-size: 13px; transition: .1s; border-left: 2px solid transparent; }
+.les:hover { background: rgba(255,255,255,.03); }
+.les.active { border-color: var(--accent); background: rgba(99,102,241,.06); }
+.les .chk { font-size: 11px; width: 14px; text-align: center; color: var(--text2); }
+.les .chk.d { color: var(--green); }
+.les .ttl { flex: 1; }
+.les .dur { font-size: 11px; color: var(--text2); }
 
-/* Lesson View */
-.lesson-view { max-width:720px; margin:0 auto; }
-.les-header { margin-bottom:20px; }
-.les-header .bread { font-size:11px; color:var(--text2); margin-bottom:6px; }
-.les-header h1 { font-size:24px; font-weight:800; margin-bottom:6px; }
-.les-header .meta { display:flex; gap:16px; font-size:12px; color:var(--text2); }
-.les-body { font-size:14px; line-height:1.8; }
-.les-body p { margin-bottom:14px; }
-.les-body code { font-family:var(--code); background:rgba(99,102,241,.1); padding:1px 5px; border-radius:3px; font-size:13px; }
-.les-body pre { background:#0d0f14; border:1px solid var(--border); border-radius:8px; padding:14px; overflow-x:auto; margin-bottom:14px; font-size:12px; line-height:1.5; }
-.les-body h2 { font-size:18px; font-weight:700; margin:24px 0 10px; }
-.les-body h3 { font-size:16px; font-weight:600; margin:18px 0 8px; }
-.les-body ul, .les-body ol { margin-bottom:14px; padding-left:20px; }
-.les-actions { display:flex; gap:10px; margin-top:24px; padding-top:20px; border-top:1px solid var(--border); }
-.btn { padding:8px 20px; border-radius:8px; font-size:13px; font-weight:600; cursor:pointer; transition:.2s; border:none; font-family:inherit; }
-.btn-primary { background:var(--accent); color:#fff; }
-.btn-primary:hover { background:var(--accent2); }
-.btn-ghost { background:transparent; border:1px solid var(--border); color:var(--text2); }
-.btn-ghost:hover { border-color:var(--accent); color:var(--text); }
-.btn-sm { padding:6px 14px; font-size:12px; }
+/* Lesson */
+.les-v { max-width: 680px; margin: 0 auto; }
+.les-v .crumb { font-size: 12px; color: var(--text2); margin-bottom: 4px; }
+.les-v h1 { font-size: 26px; font-weight: 700; letter-spacing: -.5px; }
+.les-v .meta { font-size: 12px; color: var(--text2); margin-top: 4px; margin-bottom: 20px; }
+.les-v .body { font-size: 14px; line-height: 1.8; }
+.les-v .body p { margin-bottom: 14px; }
+.les-v .body code { font-size: 13px; background: rgba(99,102,241,.1); padding: 1px 5px; border-radius: 4px; }
+.les-v .body pre { background: #0d0f14; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 16px; overflow-x: auto; margin-bottom: 14px; font-size: 13px; line-height: 1.6; }
+.les-v .body h2 { font-size: 18px; font-weight: 600; margin: 24px 0 10px; }
+.les-v .body h3 { font-size: 16px; font-weight: 600; margin: 20px 0 8px; }
+.les-v .body ul, .les-v .body ol { margin-bottom: 14px; padding-left: 20px; }
+.les-v .challenge { margin: 16px 0; padding: 14px; background: rgba(245,158,11,.05); border: 1px solid rgba(245,158,11,.2); border-radius: var(--radius-sm); }
+.les-v .challenge strong { color: var(--amber); font-size: 13px; }
+.les-v .challenge p { font-size: 13px; margin-top: 4px; color: var(--text2); }
+.les-act { display: flex; gap: 10px; margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--border); }
+.btn { padding: 8px 20px; border-radius: var(--radius-sm); font-size: 13px; font-weight: 500; cursor: pointer; transition: .15s; border: none; font-family: inherit; }
+.btn-p { background: var(--accent); color: #fff; }
+.btn-p:hover { background: var(--accent2); }
+.btn-g { background: transparent; border: 1px solid var(--border); color: var(--text2); }
+.btn-g:hover { border-color: var(--accent); color: var(--text); }
 
 /* Modal */
-.modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,.6); z-index:100; display:flex; align-items:center; justify-content:center; }
-.modal-box { background:var(--card); border:1px solid var(--border); border-radius:16px; padding:32px; max-width:400px; width:90%; text-align:center; }
-.modal-box h2 { font-size:18px; font-weight:700; margin-bottom:8px; }
-.modal-box p { font-size:13px; color:var(--text2); margin-bottom:16px; }
-.modal-box input { width:100%; padding:10px 14px; border-radius:8px; border:1px solid var(--border); background:var(--surface); color:var(--text); font-size:14px; margin-bottom:12px; outline:none; }
-.modal-box input:focus { border-color:var(--accent); }
-.modal-box .btn { width:100%; }
+.m-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.6); z-index: 100; display: flex; align-items: center; justify-content: center; }
+.m-box { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 32px; max-width: 380px; width: 90%; text-align: center; }
+.m-box h2 { font-size: 18px; font-weight: 700; margin-bottom: 6px; }
+.m-box p { font-size: 13px; color: var(--text2); margin-bottom: 16px; }
+.m-box input { width: 100%; padding: 10px 14px; border-radius: var(--radius-sm); border: 1px solid var(--border); background: var(--bg2); color: var(--text); font-size: 14px; outline: 0; margin-bottom: 12px; }
+.m-box input:focus { border-color: var(--accent); }
+.m-box .btn { width: 100%; margin-bottom: 6px; }
 
-@media(max-width:768px){
-  .sidebar { width:200px; }
-  .content { padding:16px; }
-  .grid-2 { grid-template-columns:1fr; }
-  .hero h1 { font-size:28px; }
-  .stats { gap:16px; }
+@media (max-width: 768px) {
+  .content { padding: 24px 20px; }
+  .grid-2 { grid-template-columns: 1fr; }
+  .hero h1 { font-size: 28px; }
+  .stats { gap: 24px; }
 }
-@media(max-width:640px){
-  .sidebar { display:none; }
-  .sidebar.open { display:flex; position:fixed; inset:0; z-index:50; width:100%; }
-  .content { padding:12px; }
-  .hero h1 { font-size:22px; }
-  .stats { flex-wrap:wrap; gap:12px; }
-  .stat-num { font-size:20px; }
-  .les-header h1 { font-size:20px; }
-  .lesson-view { padding:0; }
-  .topbar { padding:8px 12px; flex-wrap:wrap; }
-  .topbar .search { max-width:100%; order:2; }
+@media (max-width: 640px) {
+  .sidebar { display: none; }
+  .sidebar.o { display: flex; position: fixed; inset: 0; z-index: 50; width: 260px; }
+  .content { padding: 16px; }
+  .hero h1 { font-size: 24px; }
+  .stats { gap: 16px; flex-wrap: wrap; }
+  .stat-num { font-size: 22px; }
+  .topbar { padding: 0 12px; }
+  .topbar .search { max-width: none; }
 }
 </style>
 </head>
 <body>
-
 <div class="app">
-  <!-- Sidebar -->
-  <aside class="sidebar" id="sidebar">
-    <div class="sidebar-header">
-      <div class="logo">BW</div>
-      <div><h1>Blaze<span>Web</span>Guide</h1></div>
+  <aside class="sidebar" id="sb">
+    <div class="logo">
+      <div class="logo-mark">B</div>
+      <div class="logo-text">Blaze<span>Web</span>Guide</div>
     </div>
-    <div class="sidebar-nav" id="sideNav">
-      <div class="nav-item active" onclick="showHome()"><span>🏠</span> Home</div>
-      <div style="font-size:10px;color:var(--text2);padding:8px 12px 4px;font-weight:600;text-transform:uppercase;letter-spacing:1px;">Levels</div>
-      <div id="levelList"></div>
-    </div>
-    <div style="padding:8px;border-top:1px solid var(--border);">
-      <div class="nav-item" onclick="showProfile()" style="font-size:12px;"><span>👤</span> <span id="userDisplay">Profile</span></div>
-    </div>
+    <section>
+      <div class="nav-item" onclick="showHome()"><span>🏠</span> Home</div>
+    </section>
+    <section style="flex:1;">
+      <div class="section-label">Curriculum</div>
+      <div id="lvlList"></div>
+    </section>
+    <section>
+      <div class="nav-item" id="userNav" onclick="showAuth()" style="font-size:12px;"><span>👤</span> <span id="userName">Sign In</span></div>
+    </section>
   </aside>
-
-  <!-- Main -->
   <main class="main">
     <div class="topbar">
-      <button class="btn" onclick="togSidebar()" id="menuBtn" style="display:none;">☰</button>
-      <div class="search"><span class="icon">🔍</span><input id="searchInp" placeholder="Search lessons..." oninput="search(this.value)"></div>
-      <button class="btn" onclick="showCert()">🏆</button>
-      <button class="btn primary" id="userBtn" onclick="showAuth()">Sign In</button>
+      <button class="btn btn-g" onclick="document.getElementById('sb').classList.toggle('o')" style="display:none;" id="mBtn">☰</button>
+      <div class="search"><span class="icon">🔍</span><input id="sInp" placeholder="Search lessons..." oninput="doSearch(this.value)"></div>
+      <div class="actions">
+        <button onclick="showProfile()">Profile</button>
+        <button onclick="showCert()">Cert</button>
+        <button class="pri" id="authBtn" onclick="showAuth()">Sign In</button>
+      </div>
     </div>
-    <div class="content" id="content"></div>
+    <div class="content" id="mainContent"></div>
   </main>
 </div>
 
 <script>
-// ─── STATE ──────────────────────────────────────────────
-const LEVELS = ['beginner','intermediate','advanced','pro'];
+const API = 'https://ideas-pix-dom-sox.trycloudflare.com';
+let USER = localStorage.getItem('bwg_user');
+let LVL = null, MOD = null, LES = null, VIEW = 'home';
+const LVLS = ['beginner','intermediate','advanced','pro'];
 const NAMES = {beginner:'Beginner',intermediate:'Intermediate',advanced:'Advanced',pro:'Pro'};
-const COLORS = {beginner:'#22c55e',intermediate:'#3b82f6',advanced:'#f59e0b',pro:'#ef4444'};
+const COLS = {beginner:'#22c55e',intermediate:'#3b82f6',advanced:'#f59e0b',pro:'#ef4444'};
+const SUBS = {beginner:'Start from zero',intermediate:'Level up',advanced:'Go deep',pro:'Master it'};
 
-function getProgress() {
-  let p = {};
-  try { p = JSON.parse(localStorage.getItem('bwg_progress')||'{}'); } catch(e) {}
-  return p;
-}
-function saveProgress(p) { localStorage.setItem('bwg_progress',JSON.stringify(p)); }
-function isDone(id) { return !!getProgress()[id]; }
-
-function lvlProg(id) {
-  const lvl = CURRICULUM[id]; if(!lvl) return {d:0,t:0,p:0};
-  const p = getProgress(); let t=0,d=0;
-  lvl.modules.forEach(m=>m.lessons.forEach(l=>{t++;if(p[l.id]||l.isCapstone)d++;}));
+function prog() { try { return JSON.parse(localStorage.getItem('bwg_prog')||'{}'); } catch { return {}; } }
+function save(p) { localStorage.setItem('bwg_prog',JSON.stringify(p)); }
+function done(id) { return !!prog()[id]; }
+function lvlP(id) {
+  const l=CURRICULUM[id]; if(!l) return {d:0,t:0,p:0};
+  const p=prog(); let t=0,d=0;
+  l.modules.forEach(m=>m.lessons.forEach(l=>{t++;if(p[l.id])d++;}));
   return {d,t,p:t?Math.round(d/t*100):0};
 }
-function lvlDone(id) { const x=lvlProg(id); return x.t>0&&x.p>=100; }
-function lvlUnlocked(id) {
-  const i=LEVELS.indexOf(id); if(i===0) return true;
-  return lvlDone(LEVELS[i-1]);
-}
-function overall() {
-  let t=0,d=0; const p=getProgress();
-  Object.values(CURRICULUM).forEach(l=>l.modules.forEach(m=>m.lessons.forEach(l=>{t++;if(p[l.id])d++;})));
-  return {d,t,p:t?Math.round(d/t*100):0};
-}
+function lvlDone(id) { const x=lvlP(id); return x.t>0&&x.p>=100; }
+function lvlUnlocked(id) { const i=LVLS.indexOf(id); return i===0||lvlDone(LVLS[i-1]); }
+function totalP() { let t=0,d=0; const p=prog(); Object.values(CURRICULUM).forEach(l=>l.modules.forEach(m=>m.lessons.forEach(l=>{t++;if(p[l.id])d++;}))); return {d,t,p:t?Math.round(d/t*100):0}; }
 
-// ─── RENDER ─────────────────────────────────────────────
 function render() {
-  renderLevels();
+  const t=totalP();
+  document.getElementById('lvlList').innerHTML = LVLS.map(id => {
+    const x=lvlP(id), dl=lvlDone(id), ul=lvlUnlocked(id);
+    return `<div class="nav-item ${LVL===id?'active':''}" onclick="${ul?`goLvl('${id}')`:''}" style="${ul?'':'opacity:.4;cursor:default;'}">
+      <span class="dot" style="background:${COLS[id]}"></span>${NAMES[id]} ${dl?'✓':''}${!ul?'🔒':''}<span class="badge">${x.d}/${x.t}</span></div>`;
+  }).join('');
+  document.getElementById('authBtn').textContent = USER||'Sign In';
+  document.getElementById('userName').textContent = USER||'Sign In';
   if(VIEW==='home') renderHome();
   else if(VIEW==='level'&&LVL) renderLevel();
-  else if(VIEW==='lesson'&&LES) renderLesson();
+  else if(VIEW==='lesson'&&LES) renderLes();
   else if(VIEW==='profile') renderProfile();
   else if(VIEW==='cert') renderCert();
-  updateUserBtn();
-}
-
-function renderLevels() {
-  document.getElementById('levelList').innerHTML = LEVELS.map(id => {
-    const x = lvlProg(id);
-    const done = lvlDone(id);
-    const unlocked = lvlUnlocked(id);
-    return `<div class="nav-item ${LVL===id?'active':''} ${unlocked?'':'locked'}" onclick="${unlocked?`goLevel('${id}')`:''}">
-      <span class="dot" style="background:${COLORS[id]}"></span>
-      ${NAMES[id]} ${done?'✅':''}${unlocked?'':'🔒'}
-      <span class="badge">${x.d}/${x.t}</span>
-    </div>`;
-  }).join('');
 }
 
 function renderHome() {
-  const o = overall();
-  const el = document.getElementById('content');
-  let cards = LEVELS.map(id => {
-    const x = lvlProg(id), unlocked = lvlUnlocked(id), done = lvlDone(id);
-    return `<div class="card ${unlocked?'':'locked'}" onclick="${unlocked?`goLevel('${id}')`:''}">
-      <div class="tag" style="background:${COLORS[id]}22;color:${COLORS[id]}">${done?'✅ ':''}${NAMES[id]}</div>
-      <h3>${NAMES[id]}${!unlocked?' 🔒':''}</h3>
-      <p style="font-size:11px;margin-top:2px;">${done?'All lessons completed!':unlocked?x.d+'/'+x.t+' lessons':'Complete '+NAMES[LEVELS[LEVELS.indexOf(id)-1]]+' first'}</p>
-      ${unlocked&&!done?`<div style="margin-top:8px;height:4px;background:rgba(255,255,255,.05);border-radius:2px;overflow:hidden;"><div style="height:100%;width:${x.p}%;background:${COLORS[id]};border-radius:2px;"></div></div>`:''}
+  const t=totalP();
+  const cards = LVLS.map(id => {
+    const x=lvlP(id), dl=lvlDone(id), ul=lvlUnlocked(id);
+    return `<div class="card" onclick="${ul?`goLvl('${id}')`:''}" style="${ul?'':'opacity:.5;cursor:default;'}">
+      <div class="badge" style="background:${COLS[id]}22;color:${COLS[id]}">${dl?'✓ ':''}${NAMES[id]}${!ul?' 🔒':''}</div>
+      <h3>${NAMES[id]}</h3>
+      <div class="desc">${ul?x.d+'/'+x.t+' lessons ('+x.p+'%)':dl?'All complete!':'Complete '+NAMES[LVLS[LVLS.indexOf(id)-1]]+' first'}</div>
+      ${ul&&!dl?`<div class="bar-wrap"><div class="bar-fill" style="width:${x.p}%;background:${COLS[id]}"></div></div>`:''}
     </div>`;
   }).join('');
-
-  el.innerHTML = `
-  <div class="home">
-    <div class="hero">
-      <h1>Master Web Development<br><span>Zero to Pro</span></h1>
-      <p>A complete curriculum with ${o.t} hands-on lessons covering everything from your first HTML tag to production-ready system design.</p>
-      <div class="stats">
-        <div class="stat"><div class="stat-num" style="color:var(--accent2)">${o.t}</div><div class="stat-lbl">Lessons</div></div>
-        <div class="stat"><div class="stat-num" style="color:var(--green)">4</div><div class="stat-lbl">Levels</div></div>
-        <div class="stat"><div class="stat-num" style="color:#f59e0b">${o.d}</div><div class="stat-lbl">Completed</div></div>
-      </div>
-      ${o.p>0?`<div style="max-width:300px;margin:0 auto 24px;height:6px;background:rgba(255,255,255,.05);border-radius:3px;overflow:hidden;"><div style="height:100%;width:${o.p}%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:3px;"></div></div>`:''}
+  document.getElementById('mainContent').innerHTML = `<div class="home"><div class="hero">
+    <h1>Master Web Development<br><span>From Zero to Pro</span></h1>
+    <p>A complete curriculum with ${t.t} lessons covering everything you need to know.</p>
+    <div class="stats">
+      <div class="stat"><div class="stat-num" style="color:var(--accent2)">${t.t}</div><div class="stat-lbl">Lessons</div></div>
+      <div class="stat"><div class="stat-num" style="color:var(--green)">4</div><div class="stat-lbl">Levels</div></div>
+      <div class="stat"><div class="stat-num" style="color:var(--amber)">${t.d}</div><div class="stat-lbl">Completed</div></div>
     </div>
-    <div class="grid-2">${cards}</div>
-  </div>`;
+    ${t.p>0?`<div style="max-width:280px;margin:0 auto 28px;height:6px;background:rgba(255,255,255,.05);border-radius:10px"><div style="height:100%;width:${t.p}%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:10px;transition:width .5s"></div></div>`:''}
+    <button class="btn btn-p" onclick="goLvl('beginner')" style="padding:10px 28px;">Start Learning →</button>
+  </div><div class="grid grid-2">${cards}</div></div>`;
 }
 
 function renderLevel() {
-  const lvl = CURRICULUM[LVL]; if(!lvl) return;
-  const x = lvlProg(LVL); const p = getProgress();
-  let html = `<div class="level-view">
-    <div class="lvl-header">
-      <span class="lvl-dot" style="background:${lvl.color}"></span>
-      <div><h2>${lvl.title}</h2><div class="lvl-prog">${x.d}/${x.t} lessons (${x.p}%)</div></div>
-    </div>`;
-
-  lvl.modules.forEach(mod => {
-    const c = mod.lessons.filter(l=>p[l.id]).length;
-    const open = MOD===mod.id;
-    html += `<div class="mod">
-      <div class="mod-head" onclick="togMod('${mod.id}')">
-        <span class="arrow ${open?'open':''}">▶</span>
-        <h4>${mod.title}</h4>
-        <span class="mod-prog">${c}/${mod.lessons.length}</span>
-      </div>
-      ${open?`<div class="mod-lessons">${mod.lessons.map(l=>{
-        const done = p[l.id]?'done':''; const act = LES===l.id?'active':'';
-        return `<div class="les ${act}" onclick="openLes('${mod.id}','${l.id}')">
-          <span class="check ${done}">${done?'✓':'○'}</span>
-          <span class="ttl">${l.title}</span>
-          <span class="dur">${l.duration||''}</span>
-        </div>`;
-      }).join('')}</div>`:''}
-    </div>`;
+  const l=CURRICULUM[LVL]; if(!l) return;
+  const x=lvlP(LVL), p=prog();
+  let html=`<div class="lvl"><div class="lvl-head"><span class="dot" style="background:${l.color}"></span><div><h2>${l.title}</h2><div class="sub">${x.d}/${x.t} lessons (${x.p}%)</div></div></div>`;
+  l.modules.forEach(mod=>{
+    const c=mod.lessons.filter(l=>p[l.id]).length, open=MOD===mod.id;
+    html+=`<div class="acc"><div class="acc-h" onclick="togMod('${mod.id}')"><span class="arrow ${open?'o':''}">▶</span><h4>${mod.title}</h4><span class="count">${c}/${mod.lessons.length}</span></div>`;
+    if(open) html+=`<div class="acc-body">${mod.lessons.map(l=>{
+      const d=p[l.id], a=LES===l.id;
+      return `<div class="les ${a?'active':''}" onclick="openLes('${mod.id}','${l.id}')"><span class="chk ${d?'d':''}">${d?'✓':'○'}</span><span class="ttl">${l.title}</span><span class="dur">${l.duration||''}</span></div>`;
+    }).join('')}</div>`;
+    html+=`</div>`;
   });
-
-  html += `<div style="text-align:center;margin-top:16px;"><button class="btn btn-ghost btn-sm" onclick="showHome()">← Back</button></div>`;
-  html += '</div>';
-  document.getElementById('content').innerHTML = html;
+  html+=`<div style="text-align:center;margin-top:16px"><button class="btn btn-g" onclick="showHome()">← Back</button></div></div>`;
+  document.getElementById('mainContent').innerHTML = html;
 }
 
-function renderLesson() {
+function renderLes() {
   for(const lid of Object.keys(CURRICULUM)) {
-    const lvl = CURRICULUM[lid];
+    const lvl=CURRICULUM[lid];
     for(const mod of lvl.modules) {
       for(const l of mod.lessons) {
-        if(l.id === LES) {
-          const done = isDone(l.id);
-          const el = document.getElementById('content');
-          el.innerHTML = `
-          <div class="lesson-view">
-            <div class="les-header">
-              <div class="bread">${lvl.title} / ${mod.title}</div>
-              <h1>${l.title}</h1>
-              <div class="meta"><span>⏱ ${l.duration||'10 min'}</span><span>${done?'✅ Completed':'○ Not completed'}</span></div>
-            </div>
-            <div class="les-body">${l.content||'<p>Content coming soon.</p>'}</div>
+        if(l.id===LES) {
+          const d=done(l.id);
+          document.getElementById('mainContent').innerHTML = `<div class="les-v">
+            <div class="crumb">${lvl.title} / ${mod.title}</div>
+            <h1>${l.title}</h1>
+            <div class="meta">${l.duration||'10 min'} · ${d?'✓ Completed':'Not completed'}</div>
+            <div class="body">${l.content||'<p>Content coming soon.</p>'}</div>
             ${l.codeExample?`<pre><code>${esc(l.codeExample)}</code></pre>`:''}
-            ${l.challenge?`<div style="margin:16px 0;padding:14px;border:1px solid #f59e0b33;background:rgba(245,158,11,.05);border-radius:8px;">
-              <strong style="color:#f59e0b;font-size:13px;">🎯 Challenge:</strong>
-              <p style="font-size:13px;margin-top:4px;color:var(--text2);">${l.challenge}</p>
-            </div>`:''}
-            <div class="les-actions">
-              <button class="btn ${done?'btn-ghost':'btn-primary'}" onclick="toggleLes('${l.id}')">${done?'✓ Completed':'Mark Complete'}</button>
-              ${l.codeExample?`<button class="btn btn-ghost" onclick="playground('${escJs(l.codeExample)}')">▶ Run Code</button>`:''}
-              <button class="btn btn-ghost" onclick="goLevel('${lid}')">← Back</button>
+            ${l.challenge?`<div class="challenge"><strong>🎯 Challenge</strong><p>${l.challenge}</p></div>`:''}
+            <div class="les-act">
+              <button class="btn ${d?'btn-g':'btn-p'}" onclick="togLes('${l.id}')">${d?'✓ Done':'Mark Complete'}</button>
+              <button class="btn btn-g" onclick="goLvl('${lid}')">← Back</button>
             </div>
           </div>`;
           return;
@@ -328,145 +288,72 @@ function renderLesson() {
 }
 
 function renderProfile() {
-  const o = overall();
-  let html = `<div class="home" style="max-width:500px;"><div style="text-align:center;margin-bottom:24px;">
-    <div style="width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 12px;">👤</div>
-    <h2 style="font-size:20px;font-weight:800;">${USER||'Guest'}</h2>
-    <p style="font-size:13px;color:var(--text2);">${o.d}/${o.t} lessons completed (${o.p}%)</p>
-  </div>`;
-  LEVELS.forEach(id => {
-    const x = lvlProg(id); const d = lvlDone(id); const u = lvlUnlocked(id);
-    html += `<div style="display:flex;align-items:center;gap:10px;padding:10px 14px;border:1px solid var(--border);border-radius:8px;margin-bottom:6px;background:var(--card);">
-      <span class="dot" style="width:8px;height:8px;border-radius:50%;background:${COLORS[id]};flex-shrink:0;"></span>
-      <span style="flex:1;font-size:13px;font-weight:600;">${NAMES[id]}${d?' ✅':''}${!u?' 🔒':''}</span>
-      <span style="font-size:12px;color:var(--text2);">${x.d}/${x.t}</span>
-      <div style="width:60px;height:4px;background:rgba(255,255,255,.05);border-radius:2px;"><div style="height:100%;width:${x.p}%;background:${COLORS[id]};border-radius:2px;"></div></div>
-      ${d?`<button class="btn btn-ghost btn-sm" onclick="viewCert('${id}')">🏆</button>`:''}
-    </div>`;
+  const t=totalP();
+  let html=`<div class="lvl"><div style="text-align:center;margin-bottom:24px"><div style="width:56px;height:56px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:24px;margin:0 auto 8px">👤</div><h2 style="font-size:18px;font-weight:700">${USER||'Guest'}</h2><div style="font-size:13px;color:var(--text2)">${t.d}/${t.t} completed (${t.p}%)</div></div>`;
+  LVLS.forEach(id=>{
+    const x=lvlP(id), dl=lvlDone(id), ul=lvlUnlocked(id);
+    html+=`<div style="display:flex;align-items:center;gap:10px;padding:10px 14px;border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:6px;background:var(--card)"><span style="width:7px;height:7px;border-radius:50%;background:${COLS[id]};flex-shrink:0"></span><span style="flex:1;font-size:13px">${NAMES[id]}${dl?' ✓':''}${!ul?' 🔒':''}</span><span style="font-size:12px;color:var(--text2)">${x.d}/${x.t}</span><div class="bar-wrap" style="width:50px"><div class="bar-fill" style="width:${x.p}%;background:${COLS[id]}"></div></div></div>`;
   });
-  html += `<div style="text-align:center;margin-top:16px;"><button class="btn btn-ghost btn-sm" onclick="showHome()">← Back</button></div></div>`;
-  document.getElementById('content').innerHTML = html;
+  html+=`<div style="text-align:center;margin-top:16px"><button class="btn btn-g" onclick="showHome()">← Back</button></div></div>`;
+  document.getElementById('mainContent').innerHTML = html;
 }
 
 function renderCert() {
-  const o = overall();
-  let html = `<div class="home" style="max-width:500px;text-align:center;"><h2 style="font-size:20px;font-weight:700;margin-bottom:16px;">🏆 Certifications</h2>`;
-  LEVELS.forEach(id => {
-    const d = lvlDone(id); const x = lvlProg(id);
-    html += `<div style="padding:16px;border:1px solid ${d?COLORS[id]:'var(--border)'};border-radius:10px;margin-bottom:8px;background:var(--card);text-align:left;">
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
-        <span style="font-weight:600;font-size:14px;">${NAMES[id]}</span>
-        ${d?'<span style="color:var(--green);font-size:12px;">✅ Earned</span>':'<span style="color:var(--text2);font-size:12px;">'+x.d+'/'+x.t+'</span>'}
-      </div>
-      ${d?`<button class="btn btn-ghost btn-sm" onclick="viewCert('${id}')">View Certificate →</button>`:'<div style="height:4px;background:rgba(255,255,255,.05);border-radius:2px;"><div style="height:100%;width:'+x.p+'%;background:'+COLORS[id]+';border-radius:2px;"></div></div>'}
-    </div>`;
+  const t=totalP();
+  let html=`<div class="lvl" style="text-align:center"><h2 style="font-size:18px;font-weight:700;margin-bottom:16px">🏆 Certifications</h2>`;
+  LVLS.forEach(id=>{
+    const dl=lvlDone(id), x=lvlP(id);
+    html+=`<div style="padding:16px;border:1px solid ${dl?COLS[id]:'var(--border)'};border-radius:var(--radius);margin-bottom:8px;background:var(--card);text-align:left"><div style="display:flex;align-items:center;gap:8px;margin-bottom:4px"><span style="font-weight:600;font-size:14px">${NAMES[id]}</span>${dl?'<span style="color:var(--green);font-size:12px">✅ Earned</span>':''}</div>${dl?`<button class="btn btn-g" onclick="viewCert('${id}')" style="font-size:12px">View Certificate →</button>`:`<div class="bar-wrap"><div class="bar-fill" style="width:${x.p}%;background:${COLS[id]}"></div></div>`}</div>`;
   });
-  if(o.p>=100) html += `<div style="padding:20px;border:2px solid var(--accent);border-radius:12px;margin-top:12px;background:var(--card);"><h3 style="font-size:16px;font-weight:700;">🎉 Grand Master</h3><p style="font-size:12px;color:var(--text2);">All ${o.t} lessons completed!</p></div>`;
-  html += `<div style="margin-top:16px;"><button class="btn btn-ghost btn-sm" onclick="showHome()">← Back</button></div></div>`;
-  document.getElementById('content').innerHTML = html;
+  if(t.p>=100) html+=`<div style="padding:20px;border:2px solid var(--accent);border-radius:var(--radius);margin-top:12px;background:var(--card)"><h3 style="font-size:16px;font-weight:700">🎉 Grand Master</h3><p style="font-size:13px;color:var(--text2)">All ${t.t} lessons completed across all levels!</p></div>`;
+  html+=`<div style="margin-top:16px"><button class="btn btn-g" onclick="showHome()">← Back</button></div></div>`;
+  document.getElementById('mainContent').innerHTML = html;
 }
 
 function viewCert(id) {
   if(!lvlDone(id)) return;
-  document.getElementById('content').innerHTML = `<div class="home" style="max-width:500px;text-align:center;">
-    <div style="padding:40px 24px;border:2px solid ${COLORS[id]};border-radius:16px;background:var(--card);">
-      <div style="width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,${COLORS[id]},${COLORS[id]}88);display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 16px;">🏆</div>
-      <h2 style="font-size:22px;font-weight:800;">Certificate</h2>
-      <p style="color:var(--text2);font-size:13px;margin:4px 0;">${NAMES[id]} Level</p>
-      <p style="font-size:11px;color:var(--text2);margin-top:12px;">BlazeWebGuide</p>
-      <p style="font-size:10px;color:var(--text2);">${new Date().toLocaleDateString()}</p>
-      <button class="btn btn-primary btn-sm" onclick="window.print()" style="margin-top:16px;">🖨 Print</button>
-      <button class="btn btn-ghost btn-sm" onclick="showHome()" style="margin-left:8px;">← Back</button>
-    </div>
-  </div>`;
+  document.getElementById('mainContent').innerHTML = `<div class="lvl" style="text-align:center"><div style="padding:40px 24px;border:2px solid ${COLS[id]};border-radius:16px;background:var(--card)"><div style="width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,${COLS[id]},${COLS[id]}66);display:flex;align-items:center;justify-content:center;font-size:24px;margin:0 auto 12px">🏆</div><h2 style="font-size:20px;font-weight:700">Certificate of Completion</h2><p style="color:var(--text2);font-size:13px;margin:4px 0">${NAMES[id]} Level</p><div style="width:40px;height:2px;background:var(--accent);margin:12px auto"></div><p style="font-size:12px;color:var(--text2)">BlazeWebGuide</p><p style="font-size:11px;color:var(--text2);margin-top:4px">${new Date().toLocaleDateString()}</p><div style="display:flex;gap:8px;justify-content:center;margin-top:16px"><button class="btn btn-p" onclick="window.print()">🖨 Print</button><button class="btn btn-g" onclick="showHome()">← Back</button></div></div></div>`;
 }
 
-// ─── ACTIONS ────────────────────────────────────────────
-function showHome() { VIEW='home'; LVL=null; LES=null; render(); }
-function goLevel(id) { LVL=id; MOD=null; LES=null; VIEW='level'; render(); }
-function togMod(id) { MOD=MOD===id?null:id; render(); }
-function openLes(mid,lid) { MOD=mid; LES=lid; VIEW='lesson'; render(); }
-function showProfile() { VIEW='profile'; render(); }
-function showCert() { VIEW='cert'; render(); }
-function togSidebar() { document.getElementById('sidebar').classList.toggle('open'); }
+function showHome() { VIEW='home';LVL=null;LES=null;render(); }
+function goLvl(id) { LVL=id;MOD=null;LES=null;VIEW='level';render(); }
+function togMod(id) { MOD=MOD===id?null:id;renderLevel(); }
+function openLes(mid,lid) { MOD=mid;LES=lid;VIEW='lesson';render(); }
+function showProfile() { VIEW='profile';render(); }
+function showCert() { VIEW='cert';render(); }
 
-function toggleLes(id) {
-  const p=getProgress();
-  if(p[id]) delete p[id]; else p[id]=true;
-  saveProgress(p);
-  render();
-  // Sync with backend if logged in
-  if(USER) {
-    fetch(API+'/api/progress',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:USER,completed:Object.keys(p)})}).catch(()=>{});
-  }
+function togLes(id) {
+  const p=prog(); if(p[id]) delete p[id]; else p[id]=true; save(p); render();
+  if(USER) fetch(API+'/api/complete',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:USER,lessonId:id,code:'marked'})}).catch(()=>{});
 }
 
-// Auth modal
 function showAuth() {
-  if(USER) { USER=null; localStorage.removeItem('bwg_user'); updateUserBtn(); render(); return; }
-  const div = document.createElement('div');
-  div.className = 'modal-overlay';
-  div.id = 'authModal';
-  div.innerHTML = `<div class="modal-box">
-    <h2>Welcome to BlazeWebGuide</h2>
-    <p>Enter a username to track your progress across devices.</p>
-    <input type="text" id="authName" placeholder="Your username" maxlength="20">
-    <button class="btn btn-primary" onclick="register()">Start Learning</button>
-    <button class="btn btn-ghost btn-sm" style="margin-top:8px;" onclick="closeModal()">Continue as Guest</button>
-  </div>`;
-  document.body.appendChild(div);
-  setTimeout(()=>document.getElementById('authName')?.focus(),100);
+  if(USER) { USER=null;localStorage.removeItem('bwg_user');render();return; }
+  const d=document.createElement('div');d.className='m-overlay';d.id='am';
+  d.innerHTML=`<div class="m-box"><h2>Welcome</h2><p>Enter a username to save progress.</p><input id="aName" placeholder="Username" maxlength="20" autofocus><button class="btn btn-p" onclick="reg()">Start Learning</button><button class="btn btn-g" onclick="document.getElementById('am').remove()">Cancel</button></div>`;
+  document.body.appendChild(d);setTimeout(()=>document.getElementById('aName')?.focus(),100);
 }
 
-function closeModal() { const m=document.getElementById('authModal'); if(m)m.remove(); }
-
-async function register() {
-  const name = document.getElementById('authName')?.value?.trim();
-  if(!name||name.length<2) return;
+async function reg() {
+  const n=document.getElementById('aName')?.value?.trim(); if(!n||n.length<2) return;
   try {
-    const r = await fetch(API+'/api/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:name})});
-    const d = await r.json();
-    if(d.success||d.user) {
-      USER = name; localStorage.setItem('bwg_user',name);
-      closeModal(); updateUserBtn(); render();
-    }
-  } catch(e) { alert('Server offline. Using local progress.'); closeModal(); }
+    const r=await fetch(API+'/api/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:n})});
+    const d=await r.json();
+    if(d.success||d.user) { USER=n;localStorage.setItem('bwg_user',n);document.getElementById('am')?.remove();render(); }
+  } catch(e) { USER=n;localStorage.setItem('bwg_user',n);document.getElementById('am')?.remove();render(); }
 }
 
-function updateUserBtn() {
-  document.getElementById('userBtn').textContent = USER ? USER : 'Sign In';
-  document.getElementById('userDisplay').textContent = USER ? USER : 'Sign In';
+function doSearch(q) {
+  if(!q||q.length<2){render();return;}
+  const r=[];const ql=q.toLowerCase();
+  Object.entries(CURRICULUM).forEach(([id,l])=>l.modules.forEach(m=>m.lessons.forEach(l=>{if(l.title.toLowerCase().includes(ql)||l.content.toLowerCase().includes(ql))r.push({...l,lvl:NAMES[id],mod:m.title,lid:id,mid:m.id});})));
+  document.getElementById('mainContent').innerHTML=`<div class="lvl"><h2 style="font-size:16px;font-weight:600;margin-bottom:12px">🔍 Results: "${q}"</h2>${r.length===0?'<p style="color:var(--text2)">No results.</p>':r.slice(0,20).map(r=>`<div style="padding:10px 14px;border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:6px;cursor:pointer;background:var(--card)" onclick="LVL='${r.lid}';LES='${r.id}';VIEW='lesson';render()"><div style="font-size:11px;color:var(--text2)">${r.lvl} / ${r.mod}</div><div style="font-size:13px;font-weight:500">${r.title}</div></div>`).join('')}</div>`;
 }
 
-function search(q) {
-  if(!q||q.length<2) { render(); return; }
-  const ql = q.toLowerCase(); const results = [];
-  Object.entries(CURRICULUM).forEach(([lid,lvl])=>{
-    lvl.modules.forEach(mod=>mod.lessons.forEach(l=>{
-      if(l.title.toLowerCase().includes(ql)||l.content.toLowerCase().includes(ql))
-        results.push({...l,lvl:NAMES[lid],mod:mod.title,lid,mid:mod.id});
-    }));
-  });
-  const el = document.getElementById('content');
-  el.innerHTML = `<div class="home"><h2 style="font-size:18px;font-weight:700;margin-bottom:12px;">🔍 Results: "${q}"</h2>
-    ${results.length===0?'<p style="color:var(--text2)">No lessons found.</p>':
-      results.slice(0,20).map(r=>`<div style="padding:10px 14px;border:1px solid var(--border);border-radius:8px;margin-bottom:6px;cursor:pointer;background:var(--card);" onclick="LVL='${r.lid}';LES='${r.id}';VIEW='lesson';render()">
-        <div style="font-size:11px;color:var(--text2);margin-bottom:2px;">${r.lvl} / ${r.mod}</div>
-        <div style="font-size:13px;font-weight:600;">${r.title}</div>
-      </div>`).join('')}
-  </div>`;
-}
+function esc(s) { if(!s)return'';return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
-function esc(s) { if(!s)return''; return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-function escJs(s) { if(!s)return''; return s.replace(/\\/g,'\\\\').replace(/`/g,'\\`').replace(/\$/g,'\\$'); }
-function playground(code) {
-  alert('Playground coming in next update! Code: ' + code.substring(0,50) + '...');
-}
-
-// ─── INIT ───────────────────────────────────────────────
 function init() {
-  if(typeof CURRICULUM==='undefined') { document.getElementById('content').innerHTML='<div style="text-align:center;padding:80px"><h2>Loading...</h2></div>'; setTimeout(init,300); return; }
-  if(USER) updateUserBtn();
+  if(typeof CURRICULUM==='undefined'){document.getElementById('mainContent').innerHTML='<div style="text-align:center;padding:80px;color:var(--text2)">Loading...</div>';setTimeout(init,200);return;}
   render();
 }
 init();
