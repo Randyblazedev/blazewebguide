@@ -133,7 +133,10 @@ function lvlP(id){const l=CURRICULUM[id];if(!l)return{d:0,t:0,p:0};let t=0,d=0;l
 function lvlDone(id){const x=lvlP(id);return x.t>0&&x.p>=100}
 function lvlUnlocked(id){const i=['beginner','intermediate','advanced','pro'].indexOf(id);return i===0||lvlDone(['beginner','intermediate','advanced','pro'][i-1])}
 
-function render(){
+// Admin auto-complete
+function checkAdmin(){if(USER&&(USER==='Randyblazedev'||USER==='randyblazedev')&&typeof CURRICULUM!=='undefined'){var ids=[];Object.values(CURRICULUM).forEach(l=>l.modules.forEach(m=>m.lessons.forEach(l=>ids.push(l.id))));ids.forEach(function(id){PROGRESS[id]=true;});localStorage.setItem('bwg_prog',JSON.stringify(PROGRESS));}}
+
+function render(){checkAdmin();
   const keys=['beginner','intermediate','advanced','pro'];
   const colors={beginner:'#22c55e',intermediate:'#3b82f6',advanced:'#f59e0b',pro:'#ef4444'};
   const names={beginner:'Beginner',intermediate:'Intermediate',advanced:'Advanced',pro:'Pro'};
