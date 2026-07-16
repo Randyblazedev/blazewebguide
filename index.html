@@ -313,10 +313,32 @@ function renderCert(){
   const keys=['beginner','intermediate','advanced','pro'];
   const colors={beginner:'#22c55e',intermediate:'#3b82f6',advanced:'#f59e0b',pro:'#ef4444'};
   const names={beginner:'Beginner',intermediate:'Intermediate',advanced:'Advanced',pro:'Pro'};
-  let html='<div style="max-width:500px;margin:0 auto;text-align:center"><h2 style="font-size:18px;font-weight:700;margin-bottom:16px">🏆 Certifications</h2>';
-  keys.forEach(k=>{const x=lvlP(k),dl=lvlDone(k);html+='<div style="padding:16px;border:1px solid '+(dl?colors[k]:'var(--border)')+';border-radius:10px;margin-bottom:8px;background:var(--card);text-align:left"><div style="font-weight:600;font-size:14px">'+names[k]+(dl?' ✅':'')+'</div>'+(dl?'<button class="btn btn-g" onclick="showCert()" style="margin-top:4px;font-size:11px;padding:4px 12px">View Certificate</button>':'<div style="height:4px;background:rgba(255,255,255,.05);border-radius:2px;margin-top:8px"><div style="height:100%;width:'+x.p+'%;background:'+colors[k]+';border-radius:2px"></div></div>')+'</div>';});
+  let html='<div style="max-width:550px;margin:0 auto;"><h2 style="font-size:20px;font-weight:700;margin-bottom:16px">🏆 Certifications</h2><p style="color:var(--text2);font-size:13px;margin-bottom:16px">Complete all lessons in a level to earn a professional certificate.</p>';
+  keys.forEach(k=>{const x=lvlP(k),dl=lvlDone(k);html+='<div style="padding:16px;border:1px solid '+(dl?colors[k]:'var(--border)')+';border-radius:10px;margin-bottom:8px;background:var(--card);display:flex;align-items:center;gap:12px;"><div style="width:36px;height:36px;border-radius:50%;background:'+colors[k]+'22;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0">'+(dl?'🏆':'🔒')+'</div><div style="flex:1"><div style="font-weight:600;font-size:14px">'+names[k]+(dl?' ✅':'')+'</div><div style="font-size:12px;color:var(--text2);margin-top:2px">'+(dl?'Completed!':x.d+'/'+x.t+' lessons ('+x.p+'%)')+'</div></div>'+(dl?'<button class="btn btn-g" onclick="showLevelCert(\''+k+'\')" style="font-size:11px;padding:5px 14px">View →</button>':'<div style="width:50px;height:4px;background:rgba(255,255,255,.05);border-radius:4px"><div style="height:100%;width:'+x.p+'%;background:'+colors[k]+';border-radius:4px"></div></div>')+'</div>';});
   html+='<button class="btn btn-g" onclick="showHome()" style="margin-top:12px">← Back</button></div>';
   document.getElementById('content').innerHTML=html;
+}
+
+function showLevelCert(level){
+  const names={beginner:'Beginner',intermediate:'Intermediate',advanced:'Advanced',pro:'Pro'};
+  const colors={beginner:'#22c55e',intermediate:'#3b82f6',advanced:'#f59e0b',pro:'#ef4444'};
+  const x=lvlP(level);
+  if(!lvlDone(level)){showCert();return;}
+  var num = Math.floor(Math.random()*900000000+100000000);
+  var today=new Date();
+  var dateStr=today.toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+  document.getElementById('content').innerHTML='<div style="max-width:700px;margin:0 auto;padding:20px 0"><div style="background:linear-gradient(135deg,'+colors[level]+'11,'+colors[level]+'22);border:2px solid '+colors[level]+';border-radius:16px;padding:48px 32px;text-align:center;position:relative;overflow:hidden"><div style="position:absolute;top:-40px;right:-40px;width:120px;height:120px;border-radius:50%;background:'+colors[level]+'11;border:2px dashed '+colors[level]+'44"></div><div style="position:absolute;bottom:-30px;left:-30px;width:80px;height:80px;border-radius:50%;background:'+colors[level]+'11;border:2px dashed '+colors[level]+'44"></div>'+
+    '<div style="width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,'+colors[level]+','+colors[level]+'88);display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 16px;box-shadow:0 4px 16px '+colors[level]+'44">🏆</div>'+
+    '<h1 style="font-size:24px;font-weight:800;letter-spacing:-.5px;margin-bottom:4px">Certificate of Completion</h1>'+
+    '<div style="width:60px;height:2px;background:'+colors[level]+';margin:12px auto"></div>'+
+    '<p style="font-size:14px;color:var(--text2);margin-bottom:4px">This certifies that</p>'+
+    '<h2 style="font-size:28px;font-weight:900;margin-bottom:4px">'+(USER||'Learner')+'</h2>'+
+    '<p style="font-size:14px;color:var(--text2);margin-bottom:16px">has successfully completed the</p>'+
+    '<h3 style="font-size:18px;font-weight:700;color:'+colors[level]+'">'+names[level]+' Level</h3>'+
+    '<p style="font-size:13px;color:var(--text2);margin-top:4px;margin-bottom:16px">of the BlazeWebGuide Web Development Curriculum</p>'+
+    '<div style="width:60px;height:2px;background:'+colors[level]+';margin:12px auto"></div>'+
+    '<div style="display:flex;justify-content:center;gap:40px;font-size:12px;color:var(--text2)"><div><div style="font-weight:600;color:var(--text)">Date</div><div>'+dateStr+'</div></div><div><div style="font-weight:600;color:var(--text)">Certificate ID</div><div>BWG-'+num+'</div></div><div><div style="font-weight:600;color:var(--text)">Level</div><div>'+names[level]+'</div></div></div>'+
+    '<div style="display:flex;gap:10px;justify-content:center;margin-top:24px"><button class="btn btn-p" onclick="window.print()" style="font-size:13px">🖨 Print</button><button class="btn btn-g" onclick="showCert()" style="font-size:13px">← Back</button></div></div></div>';
 }
 
 function toggleAI(){var p=document.getElementById('aiPanel');p.classList.toggle('o');if(p.classList.contains('o'))document.getElementById('aiInp').focus()}
