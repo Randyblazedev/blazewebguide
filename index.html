@@ -89,7 +89,7 @@ textarea.editor{width:100%;height:260px;background:#1e1e1e;color:#d4d4d4;border:
 .chal-preview{height:180px;background:#fff;border-top:1px solid var(--border)}
 .chal-preview iframe{width:100%;height:100%;border:none}
 .chal-feedback{margin-top:8px;font-size:13px;padding:8px}
-@media(max-width:768px){.grid-2{grid-template-columns:1fr}.content{padding:16px}.hero h1{font-size:28px}}
+.ai-btn{position:fixed;bottom:20px;right:20px;width:50px;height:50px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#8b5cf6);border:none;color:#fff;font-size:20px;cursor:pointer;z-index:999;box-shadow:0 4px 16px rgba(99,102,241,.4);transition:.3s;display:flex;align-items:center;justify-content:center}.ai-btn:hover{transform:scale(1.1)}.ai-panel{position:fixed;bottom:80px;right:20px;width:360px;height:480px;background:var(--card);border:1px solid var(--border);border-radius:14px;z-index:998;display:none;flex-direction:column;overflow:hidden;box-shadow:0 12px 48px rgba(0,0,0,.5)}.ai-panel.o{display:flex}.ai-h{padding:14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}.ai-h .ico{width:28px;height:28px;border-radius:6px;background:linear-gradient(135deg,var(--accent),#8b5cf6);display:flex;align-items:center;justify-content:center;font-size:14px}.ai-h h3{font-size:13px;font-weight:600;flex:1}.ai-h button{background:none;border:none;color:var(--text2);cursor:pointer;font-size:16px}.ai-msgs{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:8px;font-size:13px;line-height:1.5}.ai-msg{max-width:88%;padding:10px 14px;border-radius:10px;animation:msgIn .2s ease}.ai-msg.b{background:var(--bg2);border:1px solid var(--border);align-self:flex-start}.ai-msg.u{background:var(--accent);color:#fff;align-self:flex-end}.ai-msg pre{background:rgba(0,0,0,.3);border-radius:6px;padding:8px;margin:6px 0;font-size:12px;overflow-x:auto}.ai-in{padding:10px;border-top:1px solid var(--border);display:flex;gap:8px}.ai-in input{flex:1;padding:8px 12px;border-radius:8px;border:1px solid var(--border);background:var(--bg2);color:var(--text);font-size:13px;outline:0;font-family:inherit}.ai-in input:focus{border-color:var(--accent)}.ai-in button{width:36px;height:36px;border-radius:8px;border:none;background:var(--accent);color:#fff;cursor:pointer;font-size:14px}@keyframes msgIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}@media(max-width:768px){.grid-2{grid-template-columns:1fr}.content{padding:16px}.hero h1{font-size:28px}}
 @media(max-width:640px){.sidebar{display:none}.content{padding:12px}.hero h1{font-size:24px}}
 </style>
 </head>
@@ -108,6 +108,12 @@ textarea.editor{width:100%;height:260px;background:#1e1e1e;color:#d4d4d4;border:
 </div>
 <div class="content" id="content"></div>
 </main>
+</div>
+<button class="ai-btn" id="aiBtn" onclick="toggleAI()" title="Ask AI">🤖</button>
+<div class="ai-panel" id="aiPanel">
+<div class="ai-h"><div class="ico">🧠</div><h3>Blaze AI Tutor</h3><button onclick="toggleAI()">✕</button></div>
+<div class="ai-msgs" id="aiMsgs"><div class="ai-msg b">Hi! I'm your AI tutor. Ask me anything about web development!</div></div>
+<div class="ai-in"><input id="aiInp" placeholder="Ask a question..." onkeydown="if(event.key==='Enter')sendAI()"><button onclick="sendAI()">➤</button></div>
 </div>
 <script>
 const API='https://ideas-pix-dom-sox.trycloudflare.com';
@@ -284,6 +290,16 @@ function renderCert(){
   document.getElementById('content').innerHTML=html;
 }
 
+function toggleAI(){var p=document.getElementById('aiPanel');p.classList.toggle('o');if(p.classList.contains('o'))document.getElementById('aiInp').focus()}
+function sendAI(){
+ var i=document.getElementById('aiInp'),m=i.value.trim();if(!m)return;
+ var c=document.getElementById('aiMsgs');
+ var d=document.createElement('div');d.className='ai-msg u';d.textContent=m;c.appendChild(d);i.value='';
+ var t=document.createElement('div');t.className='ai-msg b';t.id='typing';t.textContent='...';c.appendChild(t);c.scrollTop=c.scrollHeight;
+ fetch('https://keith-switching-meaning-calculate.trycloudflare.com/api/tutor',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:m})})
+ .then(r=>r.json()).then(d=>{var e=document.getElementById('typing');if(e)e.remove();var x=document.createElement('div');x.className='ai-msg b';x.innerHTML=d.reply.replace(/\n/g,'<br>');c.appendChild(x);c.scrollTop=c.scrollHeight;})
+ .catch(function(){var e=document.getElementById('typing');if(e)e.remove();var x=document.createElement('div');x.className='ai-msg b';x.textContent='Sorry, I had trouble. Ask again!';c.appendChild(x);c.scrollTop=c.scrollHeight;});
+}
 function esc(s){if(!s)return'';return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
 
 function init(){
