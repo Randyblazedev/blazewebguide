@@ -104,7 +104,7 @@ textarea.editor{width:100%;height:260px;background:#1e1e1e;color:#d4d4d4;border:
 <div style="flex:1"></div>
 <div class="btn" onclick="showHome()">Home</div>
 <div class="btn" onclick="showProfile()">Profile</div>
-<div class="btn" id="userBtn" onclick="showAuth()">Sign In</div>
+<div class="btn" onclick="showProfile()">Profile</div>
 <div class="btn" onclick="showCert()">Cert</div>
 </div>
 <div class="content" id="content"></div>
@@ -140,7 +140,7 @@ function render(){
   const names={beginner:'Beginner',intermediate:'Intermediate',advanced:'Advanced',pro:'Pro'};
   document.getElementById('nav').innerHTML='<div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--text2);padding:4px 12px 8px">Levels</div>'+
     keys.map(k=>{const x=lvlP(k);return'<div class="nav-item '+(LVL===k?'active':'')+'" onclick="showLevel(\''+k+'\')"><span class="dot" style="background:'+colors[k]+'"></span>'+names[k]+(lvlDone(k)?' ✓':'')+(lvlUnlocked(k)?'':' 🔒')+'<span class="badge">'+x.d+'/'+x.t+'</span></div>';}).join('');
-  var ub=document.getElementById('userBtn');if(ub)ub.textContent=USER||'Sign In';
+
   if(VIEW==='home')renderHome();
   else if(VIEW==='level')renderLevel();
   else if(VIEW==='lesson')renderLesson();
