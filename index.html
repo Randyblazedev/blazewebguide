@@ -272,7 +272,15 @@ function submitChallenge(){
       // Stay in editor - user can try again
     }
   }).catch(function(){
-    fb.innerHTML='<span style="color:var(--amber)">⚠️ AI unavailable. Make sure your code has proper HTML structure.</span>';
+    // AI offline fallback - do basic code check
+    var c=code.toLowerCase();
+    if(c.includes('<')&&c.includes('>')&&code.length>30){
+      fb.innerHTML='<span style="color:var(--green);font-weight:600">✅ AI offline, but code looks good! Continuing...</span>';
+      PROGRESS[LES]=true;saveP();
+      setTimeout(goNextLes, 800);
+    } else {
+      fb.innerHTML='<span style="color:var(--amber);background:rgba(245,158,11,.1);padding:10px;border-radius:8px;display:block">⚠️ AI offline. Make sure your code has proper HTML tags and content.</span>';
+    }
   });
 }
 
