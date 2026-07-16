@@ -342,22 +342,50 @@ function startChallenge(id) {
 
 function submitCode() {
   const ed=window.chalMonaco; if(!ed) return;
-  const code=ed.getValue(); const c=code.toLowerCase();
+  const code=ed.getValue();
   const pv=document.getElementById('chalPreview'); if(pv) pv.srcdoc=code;
-  
-  let pass=true; let fb=[];
-  if(!c.includes('<')&&!c.includes('>')){pass=false;fb.push('Add HTML tags to your code.');}
-  if(code.length<30){pass=false;fb.push('Write more code — your solution is too short.');}
-  
   const feed=document.getElementById('chalFeedback');
-  if(pass){
-    feed.innerHTML='<span style="color:var(--green);font-weight:600;">✅ Challenge passed! Moving to next lesson...</span>';
-    const p=prog(); p[chalId]=true; save(p);
-    if(USER) fetch(API+'/api/complete',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:USER,lessonId:chalId,code})}).catch(()=>{});
-    setTimeout(goNextLes, 800);
-  } else {
-    feed.innerHTML='<span style="color:var(--amber);">⚠️ '+fb.join(' ')+' Fix and submit again.</span>';
-  }
+  feed.innerHTML='<span style="color:var(--text2);">🤖 AI is reviewing your code...</span>';
+  
+  // Find lesson title for context
+  let lessonTitle = '';
+  for(const lid of Object.keys(CURRICULUM))
+    for(const m of CURRICULUM[lid].modules)
+      for(const l of m.lessons)
+        if(l.id===chalId) lessonTitle=l.title;
+  
+  // Send to AI tutor for review
+  fetch('https://keith-switching-meaning-calculate.trycloudflare.com/api/tutor', {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({
+      message: 'Review this code for the challenge: "' + lessonTitle + '".\n\nCode to review:\n```html\n' + code + '\n```\n\nIs this code correct? Check: 1) Does it have proper HTML structure? 2) Does it demonstrate the concept taught? 3) Are there any errors? Reply with either: PASS [brief explanation why it passes] or FAIL [specific error and how to fix]'
+    })
+  })
+  .then(r=>r.json())
+  .then(data=>{
+    const reply = data.reply || '';
+    if(reply.startsWith('PASS')){
+      feed.innerHTML='<span style="color:var(--green);font-weight:600;">✅ ' + reply.slice(5) + '</span>';
+      const p=prog(); p[chalId]=true; save(p);
+      if(USER) fetch(API+'/api/complete',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:USER,lessonId:chalId,code})}).catch(()=>{});
+      setTimeout(goNextLes, 1500);
+    } else {
+      feed.innerHTML='<span style="color:var(--amber);">⚠️ ' + reply.replace(/FAIL/g,'').trim() + '</span>';
+    }
+  })
+  .catch(()=>{
+    // Fallback: basic check
+    const c=code.toLowerCase();
+    if(c.includes('<')&&c.includes('>')&&code.length>30){
+      feed.innerHTML='<span style="color:var(--green);font-weight:600;">✅ Looking good! Moving on...</span>';
+      const p=prog(); p[chalId]=true; save(p);
+      if(USER) fetch(API+'/api/complete',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:USER,lessonId:chalId,code})}).catch(()=>{});
+      setTimeout(goNextLes, 800);
+    } else {
+      feed.innerHTML='<span style="color:var(--amber);">⚠️ Make sure your code has proper HTML structure with tags and content.</span>';
+    }
+  });
 }
 
 function resetChallenge(){
