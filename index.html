@@ -223,25 +223,19 @@ function submitChallenge(){
   fetch('https://keith-switching-meaning-calculate.trycloudflare.com/api/tutor',{
     method:'POST',
     headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({message:'Review this code from a BEGINNER for the challenge. Be encouraging and supportive:\n\n```html\n'+code+'\n```\n\nIf the code shows any effort (has tags, content), reply PASS with a short encouraging message. Only fail if completely empty. Keep it short and kind.'})
+    body:JSON.stringify({message:'Review this code for a challenge. Be strict:```html\n'+code+'\n```\nDoes this code show proper HTML structure with tags and content? Reply PASS [message] if yes, FAIL [error] if no.'})
   }).then(r=>r.json()).then(d=>{
     var r=d.reply||'';
     if(r.startsWith('PASS')){
-      fb.innerHTML='<span style="color:var(--green);font-weight:600">✅ '+r.slice(5)+'</span>';
+      fb.innerHTML='<span style="color:var(--green);font-weight:600">✅ Correct! Moving forward...</span>';
       PROGRESS[LES]=true;saveP();
-      setTimeout(function(){VIEW='lesson';render();renderLesson();},800);
+      setTimeout(goNextLes, 800);
     } else {
-      fb.innerHTML='<span style="color:var(--amber)">⚠️ '+r.replace(/FAIL/g,'').trim()+'</span>';
+      fb.innerHTML='<span style="color:var(--amber);background:rgba(245,158,11,.1);padding:10px;border-radius:8px;display:block">⚠️ '+r.replace(/FAIL/g,'').trim()+'</span>';
+      // Stay in editor - user can try again
     }
   }).catch(function(){
-    // Fallback
-    if(code.length>30&&code.includes('<')){
-      fb.innerHTML='<span style="color:var(--green);font-weight:600">✅ Looks good!</span>';
-      PROGRESS[LES]=true;saveP();
-      setTimeout(function(){VIEW='lesson';render();renderLesson();},800);
-    } else {
-      fb.innerHTML='<span style="color:var(--amber)">⚠️ Add more code with HTML tags and content</span>';
-    }
+    fb.innerHTML='<span style="color:var(--amber)">⚠️ AI unavailable. Make sure your code has proper HTML structure.</span>';
   });
 }
 
