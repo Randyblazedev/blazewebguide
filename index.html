@@ -359,7 +359,7 @@ function submitCode() {
     method:'POST',
     headers:{'Content-Type':'application/json'},
     body:JSON.stringify({
-      message: 'Review this code for the challenge: "' + lessonTitle + '".\n\nCode to review:\n```html\n' + code + '\n```\n\nIs this code correct? Check: 1) Does it have proper HTML structure? 2) Does it demonstrate the concept taught? 3) Are there any errors? Reply with either: PASS [brief explanation why it passes] or FAIL [specific error and how to fix]'
+      message: 'You are a PATIENT beginner-friendly coding tutor. Review this code from a BEGINNER for the challenge: "' + lessonTitle + '".\n\nCode:\n```html\n' + code + '\n```\n\nRules: 1) Be encouraging - they are LEARNING. 2) If the code shows basic understanding (has tags, content, attempts the concept), PASS it. 3) If there are minor issues, still PASS but give a friendly tip. 4) Only FAIL if the code is completely wrong or empty. 5) Keep feedback SHORT and KIND.\n\nReply format: PASS [your encouraging message] or FAIL [gentle explanation of what to fix]'
     })
   })
   .then(r=>r.json())
