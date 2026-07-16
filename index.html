@@ -337,6 +337,21 @@ function runCode() {
   if(ed && preview) {
     editorCode = ed.getValue();
     preview.srcdoc = editorCode;
+    // Auto-complete lesson on running code
+    if(LES && !done(LES)) {
+      setTimeout(() => {
+        const p=prog(); p[LES]=true; save(p);
+        // Update the status display
+        const metaEl = document.querySelector('.meta');
+        if(metaEl) metaEl.innerHTML = metaEl.innerHTML.replace('Not completed','✅ Completed');
+        const btn = document.querySelector('.les-act .btn-p, .les-act .btn-g');
+        if(btn) { btn.textContent = '✓ Done'; btn.className = 'btn btn-g'; }
+        // Sync to backend
+        if(USER) {
+          fetch(API+'/api/complete',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:USER,lessonId:LES,code:editorCode})}).catch(()=>{});
+        }
+      }, 500);
+    }
   }
 }
 function resetCode() {
@@ -389,17 +404,20 @@ function togLes(id) {
 function showAuth() {
   if(USER) { USER=null;localStorage.removeItem('bwg_user');render();return; }
   const d=document.createElement('div');d.className='m-overlay';d.id='am';
-  d.innerHTML=`<div class="m-box"><h2>Welcome</h2><p>Enter a username to save progress.</p><input id="aName" placeholder="Username" maxlength="20" autofocus><button class="btn btn-p" onclick="reg()">Start Learning</button><button class="btn btn-g" onclick="document.getElementById('am').remove()">Cancel</button></div>`;
+  d.innerHTML=`<div class="m-box"><h2>Welcome to BlazeWebGuide</h2><p>Enter your name to start learning. Progress saves automatically!</p><input id="aName" placeholder="Your name" maxlength="20" autofocus><button class="btn btn-p" onclick="reg()">Start Learning</button><button class="btn btn-g" onclick="document.getElementById('am').remove()">Cancel</button></div>`;
   document.body.appendChild(d);setTimeout(()=>document.getElementById('aName')?.focus(),100);
 }
 
 async function reg() {
   const n=document.getElementById('aName')?.value?.trim(); if(!n||n.length<2) return;
+  // Save locally immediately
+  USER=n;localStorage.setItem('bwg_user',n);
+  document.getElementById('am')?.remove();
+  render();
+  // Try backend sync (non-blocking)
   try {
-    const r=await fetch(API+'/api/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:n})});
-    const d=await r.json();
-    if(d.success||d.user) { USER=n;localStorage.setItem('bwg_user',n);document.getElementById('am')?.remove();render(); }
-  } catch(e) { USER=n;localStorage.setItem('bwg_user',n);document.getElementById('am')?.remove();render(); }
+    await fetch(API+'/api/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:n})});
+  } catch(e) { /* backend offline, using local progress */ }
 }
 
 function doSearch(q) {
