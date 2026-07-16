@@ -121,7 +121,14 @@ const API='https://quest-seq-medicaid-surveys.trycloudflare.com';
 var LVL=null,MOD=null,LES=null,VIEW='home',CONTENT={},CONTENT_LOADED=false,PROGRESS={},USER=localStorage.getItem('bwg_user')||null;
 
 try{PROGRESS=JSON.parse(localStorage.getItem('bwg_prog')||'{}')}catch(e){}
-function saveP(){localStorage.setItem('bwg_prog',JSON.stringify(PROGRESS))}
+function saveP(){
+  localStorage.setItem('bwg_prog',JSON.stringify(PROGRESS));
+  // Sync to backend if logged in
+  if(USER){
+    localStorage.setItem('bwg_prog_sync_'+USER,JSON.stringify(PROGRESS));
+    fetch(API+'/api/progress',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:USER,completed:Object.keys(PROGRESS).filter(k=>PROGRESS[k])})}).catch(function(){});
+  }
+}
 function done(id){return!!PROGRESS[id]}
 function lvlP(id){const l=CURRICULUM[id];if(!l)return{d:0,t:0,p:0};let t=0,d=0;l.modules.forEach(m=>m.lessons.forEach(l=>{t++;if(PROGRESS[l.id])d++}));return{d,t,p:t?Math.round(d/t*100):0}}
 function lvlDone(id){const x=lvlP(id);return x.t>0&&x.p>=100}
@@ -250,7 +257,7 @@ function submitChallenge(){
   fetch('https://keith-switching-meaning-calculate.trycloudflare.com/api/tutor',{
     method:'POST',
     headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({message:'Review this code for a challenge. Be strict:```html\n'+code+'\n```\nDoes this code show proper HTML structure with tags and content? Reply PASS [message] if yes, FAIL [error] if no.'})
+    body:JSON.stringify({message:'Review this code for a challenge. Be strict:```html\n'+code+'\n```\nDoes this code show proper HTML structure with tags and content? Reply PASS [message] if yes, FAIL [error] if no.',username:USER||''})
   }).then(r=>r.json()).then(d=>{
     var r=d.reply||'';
     if(r.startsWith('PASS')){
@@ -318,7 +325,7 @@ function sendAI(){
  var c=document.getElementById('aiMsgs');
  var d=document.createElement('div');d.className='ai-msg u';d.textContent=m;c.appendChild(d);i.value='';
  var t=document.createElement('div');t.className='ai-msg b';t.id='typing';t.textContent='...';c.appendChild(t);c.scrollTop=c.scrollHeight;
- fetch('https://keith-switching-meaning-calculate.trycloudflare.com/api/tutor',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:m})})
+ fetch('https://keith-switching-meaning-calculate.trycloudflare.com/api/tutor',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:m,username:USER||''})})
  .then(r=>r.json()).then(d=>{var e=document.getElementById('typing');if(e)e.remove();var x=document.createElement('div');x.className='ai-msg b';x.innerHTML=d.reply.replace(/\n/g,'<br>');c.appendChild(x);c.scrollTop=c.scrollHeight;})
  .catch(function(){var e=document.getElementById('typing');if(e)e.remove();var x=document.createElement('div');x.className='ai-msg b';x.textContent='Sorry, I had trouble. Ask again!';c.appendChild(x);c.scrollTop=c.scrollHeight;});
 }
