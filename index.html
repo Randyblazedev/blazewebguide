@@ -138,7 +138,7 @@ function render(){
   const colors={beginner:'#22c55e',intermediate:'#3b82f6',advanced:'#f59e0b',pro:'#ef4444'};
   const names={beginner:'Beginner',intermediate:'Intermediate',advanced:'Advanced',pro:'Pro'};
   document.getElementById('nav').innerHTML='<div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--text2);padding:4px 12px 8px">Levels</div>'+
-    keys.map(k=>{const x=lvlP(k);return'<div class="nav-item '+(LVL===k?'active':'')+'" onclick="showLevel(\''+k+'\')"><span class="dot" style="background:'+colors[k]+'"></span>'+names[k]+(lvlDone(k)?' ✓':'')+(lvlUnlocked(k)?'':' 🔒')+'<span class="badge">'+x.d+'/'+x.t+'</span></div>';}).join('');
+    keys.map(k=>{const x=lvlP(k);return'<div class="nav-item '+(LVL===k?'active':'')+'" onclick="'+(lvlUnlocked(k)?'showLevel(\''+k+'\')':'')+'" style="'+(lvlUnlocked(k)?'':'opacity:0.4;cursor:default;')+'"><span class="dot" style="background:'+colors[k]+'"></span>'+names[k]+(lvlDone(k)?' ✓':'')+(lvlUnlocked(k)?'':' 🔒')+'<span class="badge">'+x.d+'/'+x.t+'</span></div>';}).join('');
 
   if(VIEW==='home')renderHome();
   else if(VIEW==='level')renderLevel();
@@ -156,7 +156,7 @@ function renderHome(){
   let total=0;Object.values(CURRICULUM).forEach(l=>l.modules.forEach(m=>total+=m.lessons.length));
   let doneC=0;Object.values(PROGRESS).forEach(v=>{if(v)doneC++});
   document.getElementById('content').innerHTML='<div class="home"><div class="hero"><h1>Master Web Development<br><span>From Zero to Pro</span></h1><p>A complete, hands-on curriculum with '+total+' lessons covering everything from your first HTML tag to production-ready system design. Each level builds on the last — complete one to unlock the next.</p><div class="stats"><div class="stat-item"><div class="stat-num" style="color:var(--accent2)">'+total+'</div><div class="stat-label">Lessons</div></div><div class="stat-item"><div class="stat-num" style="color:var(--green)">4</div><div class="stat-label">Levels</div></div><div class="stat-item"><div class="stat-num" style="color:var(--amber)">'+doneC+'</div><div class="stat-label">Completed</div></div></div><button class="btn btn-primary" onclick="showLevel(\'beginner\')" style="font-size:15px;padding:12px 32px;">Start Learning →</button></div><div class="grid grid-2">'+
-    keys.map(k=>'<div class="card" onclick="showLevel(\''+k+'\')"><div class="tag" style="background:'+colors[k]+'22;color:'+colors[k]+'">'+names[k]+(lvlDone(k)?' ✅':'')+(lvlUnlocked(k)?'':' 🔒')+'</div><h3>'+names[k]+'</h3><p>'+descs[k]+'</p></div>').join('')+
+    keys.map(k=>'<div class="card" onclick="'+(lvlUnlocked(k)?'showLevel(\''+k+'\')':'')+'" style="'+(lvlUnlocked(k)?'':'opacity:0.5;cursor:default;')+'"><div class="tag" style="background:'+colors[k]+'22;color:'+colors[k]+'">'+names[k]+(lvlDone(k)?' ✅':'')+(lvlUnlocked(k)?'':' 🔒')+'</div><h3>'+names[k]+'</h3><p>'+descs[k]+'</p></div>').join('')+
     '</div></div>';
 }
 
