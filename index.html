@@ -4,9 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>BlazeWebGuide</title>
-<script src="curriculum.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs/loader.min.js"></script>
 <script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs/loader.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -491,9 +490,21 @@ function doSearch(q) {
 function esc(s) { if(!s)return'';return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 function escAttr(s) { if(!s)return'';return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
+// Load curriculum asynchronously
+function loadCurriculum() {
+  const s=document.createElement('script');
+  s.src='curriculum.js';
+  s.onload=()=>{ render(); };
+  s.onerror=()=>{
+    document.getElementById('mainContent').innerHTML='<div style="text-align:center;padding:80px;color:var(--text2)"><h2 style="font-size:20px;margin-bottom:8px">⚠️ Failed to load curriculum</h2><p>Please refresh the page to try again.</p></div>';
+  };
+  document.head.appendChild(s);
+}
+
 function init() {
-  if(typeof CURRICULUM==='undefined'){document.getElementById('mainContent').innerHTML='<div style="text-align:center;padding:80px;color:var(--text2)">Loading...</div>';setTimeout(init,200);return;}
-  render();
+  if(typeof CURRICULUM!=='undefined'){ render(); return; }
+  document.getElementById('mainContent').innerHTML='<div style="text-align:center;padding:80px"><div style="width:40px;height:40px;border:3px solid rgba(99,102,241,0.2);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 16px;"></div><p style="color:var(--text2);font-size:14px;">Loading curriculum...</p></div>';
+  loadCurriculum();
 }
 init();
 </script>
