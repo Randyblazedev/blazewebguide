@@ -329,7 +329,10 @@ function showLevelCert(level){
   if(!lvlDone(level)){showCert();return;}
   var num=Math.floor(Math.random()*900000000+100000000);
   var d=new Date();var ds=d.toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
-  var html='<div style="max-width:750px;margin:0 auto;padding:20px 0"><div style="background:linear-gradient(135deg,#0a0c10,#111318);border:2px solid '+colors[level]+';border-radius:16px;padding:48px 40px;text-align:center;position:relative;overflow:hidden">'+
+  var isPro=level==='pro';
+  var certBg=isPro?'linear-gradient(135deg,#0a0c10,#1a0a0a)':'linear-gradient(135deg,#0a0c10,#111318)';
+  var certBorder=isPro?'3px solid gold':'2px solid '+colors[level];
+  var html='<div style="max-width:750px;margin:0 auto;padding:20px 0"><div style="background:'+certBg+';border:'+certBorder+';border-radius:16px;padding:48px 40px;text-align:center;position:relative;overflow:hidden">'+
     '<div style="position:absolute;top:-50px;right:-50px;width:150px;height:150px;border-radius:50%;background:'+colors[level]+'08;border:2px dashed '+colors[level]+'22"></div>'+
     '<div style="position:absolute;bottom:-40px;left:-40px;width:100px;height:100px;border-radius:50%;background:'+colors[level]+'08;border:2px dashed '+colors[level]+'22"></div>'+
     '<div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:200px;font-weight:900;color:'+colors[level]+'04;pointer-events:none">B</div>'+
