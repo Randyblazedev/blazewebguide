@@ -274,55 +274,20 @@ function renderLes() {
           let html = `<div class="les-v">
             <div class="crumb">${lvl.title} / ${mod.title}</div>
             <h1>${l.title}</h1>
-            <div class="meta">${l.duration||'10 min'} · ${d?'✓ Completed':'Not completed'}</div>
+            <div class="meta">${l.duration||'10 min'} · ${d?'✅ Completed':'Not completed'}</div>
             <div class="body">${l.content||'<p>Content coming soon.</p>'}</div>`;
-          
-          if(code) {
-            html += `<div style="margin:16px 0;"><h3 style="font-size:14px;font-weight:600;margin-bottom:8px;color:var(--accent2)">📝 Example</h3>
-            <pre><code>${code}</code></pre></div>`;
-            html += `<div style="margin:16px 0;">
-              <h3 style="font-size:14px;font-weight:600;margin-bottom:8px;color:var(--green)">💻 Try it Yourself</h3>
-              <div style="border:1px solid var(--border);border-radius:8px;overflow:hidden;">
-                <div style="display:flex;gap:0;border-bottom:1px solid var(--border);background:var(--bg2);">
-                  <button id="runBtn" onclick="runCode()" style="padding:6px 16px;border:none;background:var(--accent);color:#fff;cursor:pointer;font-size:12px;font-weight:500;">▶ Run</button>
-                  <button onclick="resetCode()" style="padding:6px 16px;border:none;background:transparent;color:var(--text2);cursor:pointer;font-size:12px;">↺ Reset</button>
-                </div>
-                <div id="lessonEditor" style="height:200px;"></div>
-                <div style="border-top:1px solid var(--border);height:150px;background:#fff;">
-                  <iframe id="lessonPreview" style="width:100%;height:100%;border:none;"></iframe>
-                </div>
-              </div>
-            </div>`;
-          }
-          
-          html += `${l.challenge?`<div class="challenge"><strong>🎯 Challenge</strong><p>${l.challenge}</p></div>`:''}
+          if(code) html += `<div style="margin:16px 0;"><h3 style="font-size:14px;font-weight:600;margin-bottom:8px;color:var(--accent2)">📝 Example</h3><pre><code>${code}</code></pre></div>`;
+          html += `${l.challenge?`<div class="challenge" style="cursor:pointer;" onclick="startChallenge('${l.id}')">
+            <strong>🎯 Mini Challenge — Tap to solve</strong>
+            <p>${l.challenge}</p>
+            <div style="margin-top:8px;"><span class="btn btn-p" style="font-size:12px;padding:6px 16px;display:inline-block;">Open Coding Editor →</span></div>
+          </div>`:''}
             <div class="les-act">
               <button class="btn ${d?'btn-g':'btn-p'}" onclick="togLes('${l.id}')">${d?'✓ Done':'Mark Complete'}</button>
               <button class="btn btn-g" onclick="goLvl('${lid}')">← Back</button>
             </div>
           </div>`;
-          
           document.getElementById('mainContent').innerHTML = html;
-          
-          // Init Monaco editor after rendering
-          if(code && typeof monaco !== 'undefined') {
-            setTimeout(() => {
-              const el = document.getElementById('lessonEditor');
-              if(!el) return;
-              if(window.lessonMonaco) { window.lessonMonaco.dispose(); }
-              window.lessonMonaco = monaco.editor.create(el, {
-                value: l.codeExample,
-                language: 'html',
-                theme: 'vs-dark',
-                fontSize: 13,
-                minimap: { enabled: false },
-                automaticLayout: true,
-                wordWrap: 'on',
-                scrollBeyondLastLine: false
-              });
-              runCode();
-            }, 100);
-          }
           return;
         }
       }
@@ -330,31 +295,73 @@ function renderLes() {
   }
 }
 
-let editorCode = '';
-function runCode() {
-  const ed = window.lessonMonaco;
-  const preview = document.getElementById('lessonPreview');
-  if(ed && preview) {
-    editorCode = ed.getValue();
-    preview.srcdoc = editorCode;
-    // Auto-complete lesson on running code
-    if(LES && !done(LES)) {
-      setTimeout(() => {
-        const p=prog(); p[LES]=true; save(p);
-        // Update the status display
-        const metaEl = document.querySelector('.meta');
-        if(metaEl) metaEl.innerHTML = metaEl.innerHTML.replace('Not completed','✅ Completed');
-        const btn = document.querySelector('.les-act .btn-p, .les-act .btn-g');
-        if(btn) { btn.textContent = '✓ Done'; btn.className = 'btn btn-g'; }
-        // Sync to backend
-        if(USER) {
-          fetch(API+'/api/complete',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:USER,lessonId:LES,code:editorCode})}).catch(()=>{});
-        }
-      }, 500);
-    }
+var chalId = '';
+function startChallenge(id) {
+  chalId = id;
+  let starter = '<!DOCTYPE html>\n<html>\n<head>\n  <title>Challenge</title>\n</head>\n<body>\n  <!-- Write your solution here -->\n</body>\n</html>';
+  for(const lid of Object.keys(CURRICULUM))
+    for(const m of CURRICULUM[lid].modules)
+      for(const l of m.lessons)
+        if(l.id===id&&l.codeExample) starter=l.codeExample;
+  
+  document.getElementById('mainContent').innerHTML = `<div class="les-v">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
+      <button class="btn btn-g" onclick="renderLes()" style="padding:6px 12px;">← Back</button>
+      <h2 style="font-size:16px;font-weight:600;">🎯 Solve the Challenge</h2>
+    </div>
+    <div style="border:1px solid var(--border);border-radius:8px;overflow:hidden;">
+      <div style="display:flex;gap:8px;padding:6px 10px;border-bottom:1px solid var(--border);background:var(--bg2);align-items:center;">
+        <span style="font-size:12px;color:var(--text2);flex:1;">Write code below and click Submit</span>
+        <button onclick="submitCode()" style="padding:6px 20px;border:none;background:var(--accent);color:#fff;cursor:pointer;border-radius:6px;font-size:13px;font-weight:500;">▶ Submit</button>
+        <button onclick="resetChallenge()" style="padding:6px 12px;border:1px solid var(--border);background:transparent;color:var(--text2);cursor:pointer;border-radius:6px;font-size:12px;">↺</button>
+      </div>
+      <div id="chalEditor" style="height:260px;"></div>
+      <div style="border-top:1px solid var(--border);height:180px;background:#fff;">
+        <iframe id="chalPreview" style="width:100%;height:100%;border:none;"></iframe>
+      </div>
+    </div>
+    <div id="chalFeedback" style="margin-top:8px;"></div>
+  </div>`;
+  
+  if(typeof monaco!=='undefined') setTimeout(()=>{
+    const el=document.getElementById('chalEditor');
+    if(!el) return;
+    if(window.chalMonaco) window.chalMonaco.dispose();
+    window.chalMonaco=monaco.editor.create(el,{
+      value:starter,language:'html',theme:'vs-dark',fontSize:13,
+      minimap:{enabled:false},automaticLayout:true,wordWrap:'on',scrollBeyondLastLine:false
+    });
+    const pv=document.getElementById('chalPreview');
+    if(pv) pv.srcdoc=starter;
+  },100);
+}
+
+function submitCode() {
+  const ed=window.chalMonaco; if(!ed) return;
+  const code=ed.getValue(); const c=code.toLowerCase();
+  const pv=document.getElementById('chalPreview'); if(pv) pv.srcdoc=code;
+  
+  let pass=true; let fb=[];
+  if(!c.includes('<')&&!c.includes('>')){pass=false;fb.push('Add HTML tags to your code.');}
+  if(code.length<30){pass=false;fb.push('Write more code — your solution is too short.');}
+  
+  const feed=document.getElementById('chalFeedback');
+  if(pass){
+    feed.innerHTML='<span style="color:var(--green);font-weight:600;">✅ Challenge passed! Lesson completed!</span>';
+    const p=prog(); p[chalId]=true; save(p);
+    if(USER) fetch(API+'/api/complete',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:USER,lessonId:chalId,code})}).catch(()=>{});
+    renderLes();
+  } else {
+    feed.innerHTML='<span style="color:var(--amber);">⚠️ '+fb.join(' ')+' Fix and submit again.</span>';
   }
 }
-function resetCode() {
+
+function resetChallenge(){
+  if(window.chalMonaco){
+    window.chalMonaco.setValue(window.chalMonaco.getValue());
+    const pv=document.getElementById('chalPreview'); if(pv) pv.srcdoc=window.chalMonaco.getValue();
+  }
+}
   if(window.lessonMonaco && editorCode) {
     window.lessonMonaco.setValue(editorCode);
     runCode();
