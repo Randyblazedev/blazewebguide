@@ -155,6 +155,12 @@ function renderHome(){
 
 function showHome(){VIEW='home';LVL=null;LES=null;render()}
 function showAuth(){
+  if(USER){
+    var o=document.createElement('div');o.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:100;display:flex;align-items:center;justify-content:center';
+    o.innerHTML='<div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:28px;max-width:360px;width:90%;text-align:center"><h2 style="font-size:18px;font-weight:700;margin-bottom:6px">Logged in as '+USER+'</h2><p style="font-size:13px;color:var(--text2);margin-bottom:16px">Continue where you left off!</p><button onclick="this.parentElement.parentElement.remove()" style="width:100%;padding:10px;border-radius:8px;border:none;background:var(--accent);color:#fff;cursor:pointer;font-size:14px;font-weight:500;margin-bottom:6px">Continue Learning</button><button onclick="localStorage.removeItem(\'bwg_user\');USER=null;this.parentElement.parentElement.remove();render()" style="width:100%;padding:8px;border:none;background:transparent;color:var(--red);cursor:pointer;font-size:12px">Sign Out</button></div>';
+    document.body.appendChild(o);
+    return;
+  }
   var o=document.createElement('div');o.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:100;display:flex;align-items:center;justify-content:center';
   o.innerHTML='<div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:28px;max-width:360px;width:90%;text-align:center"><h2 style="font-size:18px;font-weight:700;margin-bottom:6px">Welcome to BlazeWebGuide</h2><p style="font-size:13px;color:var(--text2);margin-bottom:16px">Choose a unique username to save your progress</p><input id="uname" placeholder="Your username" maxlength="20" autofocus style="width:100%;padding:10px 14px;border-radius:8px;border:1px solid var(--border);background:var(--bg2);color:var(--text);font-size:14px;margin-bottom:8px;outline:0"><div id="authMsg" style="font-size:12px;color:var(--amber);margin-bottom:8px"></div><button onclick="reg()" style="width:100%;padding:10px;border-radius:8px;border:none;background:var(--accent);color:#fff;cursor:pointer;font-size:14px;font-weight:500">Start Learning</button><button onclick="this.parentElement.parentElement.remove()" style="width:100%;padding:8px;border:none;background:transparent;color:var(--text2);cursor:pointer;font-size:12px;margin-top:6px">Cancel</button></div>';
   document.body.appendChild(o);
