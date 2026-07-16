@@ -194,8 +194,15 @@ function toggleComplete(id) { const p=getProgress(); if(p[id]) delete p[id]; els
 
 function getLevelProgress(lvlId) {
   const p=getProgress(), lvl=CURRICULUM[lvlId]; if(!lvl) return {done:0,total:0,pct:0};
-  let t=0,d=0; lvl.modules.forEach(m=>m.lessons.forEach(l=>{t++;if(p[l.id])d++;}));
+  let t=0,d=0; lvl.modules.forEach(m=>m.lessons.forEach(l=>{t++;if(p[l.id]||l.isCapstone)d++;}));
   return {done:d,total:t,pct:t?Math.round(d/t*100):0};
+}
+function isLevelComplete(lvlId) { const prog=getLevelProgress(lvlId); return prog.total>0 && prog.pct>=100; }
+function isLevelUnlocked(lvlId) {
+  const order=['beginner','intermediate','advanced','pro'];
+  const idx=order.indexOf(lvlId);
+  if(idx===0) return true;
+  return isLevelComplete(order[idx-1]);
 }
 function getOverall() {
   let t=0,d=0; const p=getProgress();
@@ -242,7 +249,8 @@ function renderLanding() {
   currentView='landing';
   const o=getOverall(),levels=[{id:'beginner',name:'Beginner',desc:'Start from absolute zero. Learn HTML, CSS, JavaScript, and Git.',color:'#22c55e'},{id:'intermediate',name:'Intermediate',desc:'Master responsive design, APIs, ES6+, build tools, and deployment.',color:'#3b82f6'},{id:'advanced',name:'Advanced',desc:'Dive into React, Node.js, databases, authentication, and testing.',color:'#f59e0b'},{id:'pro',name:'Pro',desc:'Architecture, performance, security, DevOps, system design, and more.',color:'#ef4444'}];
   const el=document.getElementById('contentArea');
-  el.innerHTML='<div class="landing"><div class="hero-section"><h1>Master Web Development<br><span>Zero to Pro</span></h1><p>A complete, hands-on curriculum with '+o.total+' lessons covering everything from your first HTML tag to production-ready system design.</p><div class="stats"><div class="stat-item"><div class="stat-num" style="color:var(--accent-light)">'+o.total+'</div><div class="stat-label">Lessons</div></div><div class="stat-item"><div class="stat-num" style="color:var(--success)">4</div><div class="stat-label">Levels</div></div><div class="stat-item"><div class="stat-num" style="color:var(--warn)">'+o.done+'</div><div class="stat-label">Completed</div></div></div>'+(o.pct>0?'<div class="cert-progress-bar" style="max-width:400px;margin:0 auto 40px;"><div class="cert-progress-fill" style="width:'+o.pct+'%"></div></div>':'')+'<button class="btn btn-primary" onclick="switchLevel(\'beginner\')" style="font-size:15px;padding:12px 32px;">Start Learning</button></div><div class="level-cards">'+levels.map(l=>{const p=getLevelProgress(l.id),lvl=CURRICULUM[l.id],c=lvl?lvl.modules.reduce((a,m)=>a+m.lessons.length,0):0;return '<div class="level-card" onclick="switchLevel(\''+l.id+'\')"><div class="lvl-badge" style="background:'+l.color+'22;color:'+l.color+'">'+l.name+'</div><h3>'+l.name+'</h3><p>'+l.desc+'</p><div class="lvl-progress">'+p.done+'/'+c+' lessons ('+p.pct+'%)</div></div>';}).join('')+'</div></div>';
+  const levelCards=levels.map(l=>{const p=getLevelProgress(l.id),lvl=CURRICULUM[l.id],c=lvl?lvl.modules.reduce((a,m)=>a+m.lessons.length,0):0;const unlocked=isLevelUnlocked(l.id);const completed=isLevelComplete(l.id);return '<div class="level-card '+(unlocked?'':'opacity-50 pointer-events-none')+'" onclick="'+(unlocked?'switchLevel(\''+l.id+'\')':'')+'" style="'+(unlocked?'':'opacity:0.5;cursor:default;')+'"><div class="lvl-badge" style="background:'+l.color+'22;color:'+l.color+'">'+l.name+(completed?' ✅':'')+(unlocked?'':' 🔒')+'</div><h3>'+l.name+'</h3><p>'+l.desc+'</p><div class="lvl-progress">'+(completed?'🎉 Completed! ('+p.pct+'%)':unlocked?p.done+'/'+c+' lessons ('+p.pct+'%)':'🔒 Complete '+levels[Math.max(0,levels.indexOf(l)-1)].name+' first')+'</div>'+(completed?'<button class="btn btn-ghost" onclick="event.stopPropagation();showLevelCert(\''+l.id+'\')" style="margin-top:8px;font-size:11px;">🏆 View Certificate</button>':'')+'</div>';}).join('');
+  el.innerHTML='<div class="landing"><div class="hero-section"><h1>Master Web Development<br><span>Zero to Pro</span></h1><p>A complete, hands-on curriculum with '+o.total+' lessons covering everything from your first HTML tag to production-ready system design.</p><div class="stats"><div class="stat-item"><div class="stat-num" style="color:var(--accent-light)">'+o.total+'</div><div class="stat-label">Lessons</div></div><div class="stat-item"><div class="stat-num" style="color:var(--success)">4</div><div class="stat-label">Levels</div></div><div class="stat-item"><div class="stat-num" style="color:var(--warn)">'+o.done+'</div><div class="stat-label">Completed</div></div></div>'+(o.pct>0?'<div class="cert-progress-bar" style="max-width:400px;margin:0 auto 40px;"><div class="cert-progress-fill" style="width:'+o.pct+'%"></div></div>':'')+'<button class="btn btn-primary" onclick="switchLevel(\'beginner\')" style="font-size:15px;padding:12px 32px;">Start Learning</button></div><div class="level-cards">'+levelCards+'</div></div>';
 }
 
 function renderLesson() {
@@ -271,13 +279,42 @@ function runPlayground(){const ed=window.playgroundEditor;if(!ed)return;const fr
 function resetPlayground(){const ed=window.playgroundEditor;if(ed){ed.setValue(defaultHTML,-1);runPlayground();}}
 function openInPlayground(c){playgroundHTML=c;showPlayground();}
 
+function showLevelCert(levelId){
+  const lvl=CURRICULUM[levelId];
+  if(!lvl||!isLevelComplete(levelId)) return;
+  const names={'beginner':'Beginner','intermediate':'Intermediate','advanced':'Advanced','pro':'Pro'};
+  const el=document.getElementById('contentArea');
+  el.innerHTML='<div class="cert-container"><div class="cert-card"><div class="cert-badge">🏆</div><h2>Certificate of Completion</h2><p class="cert-sub">'+names[levelId]+' Level</p><p style="font-size:12px;color:var(--text-sec);margin-top:8px;">BlazeWebGuide</p><p style="font-size:11px;color:var(--text-sec);margin-top:4px;">Awarded '+new Date().toLocaleDateString()+'</p><button class="btn btn-primary" onclick="window.print()" style="margin-top:16px;">🖨 Print</button><button class="btn btn-ghost" onclick="showLanding()" style="margin-top:8px;">← Back</button></div></div>';
+}
+
 function renderCert(){
   const o=getOverall(),el=document.getElementById('contentArea');
-  if(o.pct<100){
-    el.innerHTML='<div class="cert-container"><div class="cert-card"><h2>🏆 Certificate</h2><p class="cert-sub">Complete all '+o.total+' lessons to earn your BlazeWebGuide certificate.</p><div class="cert-progress-bar"><div class="cert-progress-fill" style="width:'+o.pct+'%"></div></div><p style="font-size:13px;color:var(--text-sec);margin-top:8px;">'+o.done+'/'+o.total+' ('+o.pct+'%)</p></div></div>';
-  } else {
-    el.innerHTML='<div class="cert-container"><div class="cert-card"><div class="cert-badge">🏆</div><h2>Certificate of Completion</h2><p class="cert-sub">This certifies that you have completed the complete BlazeWebGuide Web Development Curriculum</p><p style="font-size:12px;color:var(--text-sec);margin-top:16px;">Awarded on '+new Date().toLocaleDateString()+'</p><p style="font-size:11px;color:var(--text-sec);margin-top:8px;">All '+o.total+' lessons completed</p><button class="btn btn-primary" onclick="window.print()" style="margin-top:16px;">🖨 Print</button></div></div>';
+  const levels=['beginner','intermediate','advanced','pro'];
+  const names={'beginner':'Beginner','intermediate':'Intermediate','advanced':'Advanced','pro':'Pro'};
+  const colors={'beginner':'#22c55e','intermediate':'#3b82f6','advanced':'#f59e0b','pro':'#ef4444'};
+  
+  let html='<div class="cert-container"><h2 style="font-size:20px;font-weight:700;margin-bottom:24px;">🏆 Certifications</h2>';
+  levels.forEach(id=>{
+    const complete=isLevelComplete(id);
+    const unlocked=isLevelUnlocked(id);
+    const prog=getLevelProgress(id);
+    html+='<div style="padding:20px;border:1px solid var(--border);border-radius:12px;margin-bottom:12px;background:var(--card);">';
+    html+='<div style="display:flex;align-items:center;gap:12px;margin-bottom:8px;"><span class="lvl-badge" style="background:'+colors[id]+'22;color:'+colors[id]+';padding:4px 12px;border-radius:20px;font-size:11px;font-weight:600;">'+names[id]+'</span>';
+    if(complete) html+='<span style="color:var(--success);font-size:13px;">✅ Completed</span>';
+    else if(unlocked) html+='<span style="color:var(--text-sec);font-size:13px;">In progress ('+prog.pct+'%)</span>';
+    else html+='<span style="color:var(--text-sec);font-size:13px;">🔒 Locked</span>';
+    html+='</div>';
+    html+='<div class="cert-progress-bar"><div class="cert-progress-fill" style="width:'+prog.pct+'%"></div></div>';
+    if(complete) html+='<button class="btn btn-ghost" onclick="showLevelCert(\''+id+'\')" style="margin-top:8px;font-size:12px;padding:6px 16px;">View Certificate →</button>';
+    html+='</div>';
+  });
+  
+  if(o.pct>=100){
+    html+='<div style="padding:24px;border:2px solid var(--accent);border-radius:12px;margin-top:16px;text-align:center;background:var(--card);"><h3 style="font-size:18px;font-weight:700;margin-bottom:4px;">🎉 Grand Master Certificate</h3><p style="color:var(--text-sec);font-size:13px;margin-bottom:12px;">All '+o.total+' lessons completed across all levels!</p><button class="btn btn-primary" onclick="window.print()">🖨 Print</button></div>';
   }
+  
+  html+='</div>';
+  el.innerHTML=html;
 }
 
 function handleSearch(q){

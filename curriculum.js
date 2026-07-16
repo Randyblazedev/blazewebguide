@@ -1,4 +1,6 @@
-// BlazeWebGuide Curriculum - 1000 Lessons
+// BlazeWebGuide Complete Curriculum
+// Updated with capstone projects
+
 const CURRICULUM = {
   "beginner": {
     "id": "beginner",
@@ -763,13 +765,15 @@ const CURRICULUM = {
             "challenge": "Practice: Git Branches (Part 2)"
           },
           {
-            "id": "b-git-5",
-            "title": "Git Basics (Part 3)",
-            "content": "Git tracks file changes. git init creates a repo. git add stages files. git commit saves. git status checks state. git log shows history.\n\ngit init\ngit add .\ngit commit -m \"Initial\"",
-            "codeExample": "8 min",
-            "challenge": "Practice: Git Basics (Part 3)",
-            "challengeType": "playground",
-            "challengeDescription": "Build: Git Basics (Part 3)"
+            "id": "beginner-capstone",
+            "title": "Capstone: Build Your First Website",
+            "content": "This is it — the final challenge of the Beginner level! You have learned HTML for structure, CSS for styling, and basic JavaScript for interactivity. Now you will build a complete, multi-page website from scratch.\n\nYour task: Build a personal portfolio website with:\n- At least 3 pages (Home, About, Projects)\n- Navigation between pages\n- Responsive design (mobile + desktop)\n- CSS animations and transitions\n- A contact form with validation\n- Basic JavaScript interactivity (menu toggle, form validation)\n\nThis project tests everything you have learned. Take your time, plan it out, and build something you are proud of. This is your first real project as a developer!\n\nEstimated effort: 4-8 hours",
+            "codeExample": "// Final Project Structure:\n// portfolio/\n// ├── index.html\n// ├── about.html\n// ├── projects.html\n// ├── style.css\n// └── script.js\n\n// You have all the skills you need.\n// Go build something amazing! 🚀",
+            "challenge": "Build and deploy a complete personal portfolio website with 3+ pages, responsive design, CSS animations, form validation, and a live deployment on Vercel or Netlify.",
+            "challengeType": "project",
+            "challengeDescription": "Build: Git Basics (Part 3)",
+            "duration": "4-8 hours",
+            "isCapstone": true
           }
         ]
       }
@@ -2297,14 +2301,15 @@ const CURRICULUM = {
             "challenge": "Practice: Vercel (Part 10)"
           },
           {
-            "id": "i-deploy-20",
-            "title": "Netlify (Part 10)",
-            "content": "Deploy with Netlify\n\nGit-based deployment with forms and functions.",
-            "codeExample": "netlify deploy",
-            "duration": "8 min",
-            "challenge": "Practice: Netlify (Part 10)",
-            "challengeType": "playground",
-            "challengeDescription": "Build: Netlify (Part 10)"
+            "id": "intermediate-capstone",
+            "title": "Capstone: Full-Stack Application",
+            "content": "You have mastered responsive design, APIs, async JavaScript, and deployment. Now it is time to build a full-stack application that showcases all these skills.\n\nYour task: Build a task management app (like a mini Trello) with:\n- Frontend built with HTML/CSS/JS (responsive)\n- Fetch data from a REST API\n- Add, edit, delete tasks\n- Drag and drop functionality\n- User authentication simulation\n- Deployed to a live URL\n\nRequirements:\n- Use async/await for all API calls\n- Implement proper error handling\n- Mobile-first responsive design\n- CSS custom properties for theming\n- localStorage for offline fallback\n\nEstimated effort: 8-16 hours",
+            "codeExample": "// Project: Task Manager\n// API: JSONPlaceholder or custom\n// Features: CRUD, drag-drop, auth\n\nasync function loadTasks() {\n  const res = await fetch(\"/api/tasks\");\n  const tasks = await res.json();\n  renderTasks(tasks);\n}",
+            "duration": "8-16 hours",
+            "challenge": "Build and deploy a full-stack task management app with CRUD operations, drag-and-drop, and live deployment.",
+            "challengeType": "project",
+            "challengeDescription": "Build: Netlify (Part 10)",
+            "isCapstone": true
           }
         ]
       }
@@ -4546,13 +4551,15 @@ const CURRICULUM = {
             "challenge": "Practice: SQL (Part 50)"
           },
           {
-            "id": "a-db-100",
-            "title": "MongoDB (Part 50)",
-            "content": "MongoDB uses flexible documents.\n\ndb.users.find()",
-            "codeExample": "10 min",
-            "challenge": "Practice: MongoDB (Part 50)",
-            "challengeType": "playground",
-            "challengeDescription": "Build: MongoDB (Part 50)"
+            "id": "advanced-capstone",
+            "title": "Capstone: Production-Ready Web App",
+            "content": "You have learned React, Node.js, databases, authentication, and testing. Now build a production-ready web application that demonstrates mastery of the full stack.\n\nYour task: Build an e-commerce or social platform with:\n- React frontend with state management\n- Node.js/Express REST API\n- Database integration (MongoDB or PostgreSQL)\n- User authentication (JWT)\n- Unit and integration tests\n- CI/CD pipeline\n- Error monitoring and logging\n- Performance optimization\n\nThis should be a portfolio-ready project that demonstrates professional-level skills.\n\nEstimated effort: 20-40 hours",
+            "codeExample": "// Tech Stack:\n// Frontend: React + TypeScript\n// Backend: Node.js + Express\n// Database: MongoDB/PostgreSQL\n// Auth: JWT\n// Tests: Jest + Cypress\n// CI/CD: GitHub Actions",
+            "challenge": "Build and deploy a production-ready full-stack application with authentication, database, testing, and CI/CD.",
+            "challengeType": "project",
+            "challengeDescription": "Build: MongoDB (Part 50)",
+            "duration": "20-40 hours",
+            "isCapstone": true
           }
         ]
       }
@@ -7534,17 +7541,20 @@ const CURRICULUM = {
             "challenge": "Practice: Docker (Part 70)"
           },
           {
-            "id": "p-devops-140",
-            "title": "CI/CD (Part 70)",
-            "content": "Automated pipelines. GitHub Actions. Build, test, deploy.\n\nname: CI\non: push\njobs:\n  build:\n    runs-on: ubuntu-latest",
-            "codeExample": "12 min",
-            "challenge": "Practice: CI/CD (Part 70)",
-            "challengeType": "playground",
-            "challengeDescription": "Build: CI/CD (Part 70)"
+            "id": "pro-capstone",
+            "title": "Capstone: Enterprise System Architecture",
+            "content": "You have reached the pinnacle of the BlazeWebGuide curriculum. You understand system design, security, DevOps, and architecture patterns. Your final challenge is to design and implement a scalable enterprise system.\n\nYour task: Design and implement a scalable real-world system such as:\n- A URL shortener (like bit.ly)\n- A real-time chat application\n- A video streaming platform backend\n- A collaborative document editor\n\nRequirements:\n- System design document with diagrams\n- Load testing and performance benchmarks\n- Security audit and hardening\n- Docker containerization\n- Kubernetes deployment config\n- Monitoring and alerting setup\n- Disaster recovery plan\n\nEstimated effort: 40-80 hours",
+            "codeExample": "// System Design Deliverables:\n// 1. Architecture diagram\n// 2. API specification\n// 3. Database schema\n// 4. Security analysis\n// 5. Deployment architecture\n// 6. Performance benchmarks\n// 7. Monitoring dashboard",
+            "challenge": "Design, implement, and document a complete enterprise-grade system with architecture docs, load testing, security hardening, and containerized deployment.",
+            "challengeType": "project",
+            "challengeDescription": "Build: CI/CD (Part 70)",
+            "duration": "40-80 hours",
+            "isCapstone": true
           }
         ]
       }
     ]
   }
 };
+
 if(typeof module!=="undefined") module.exports={CURRICULUM};
