@@ -1,130 +1,344 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>BlazeWebGuide – Master Web Development</title>
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>BlazeWebGuide</title>
 <script src="curriculum.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#0a0c10;--surface:#111318;--card:#181b22;--border:rgba(99,102,241,0.12);--text:#e2e8f0;--text2:#94a3b8;--accent:#6366f1;--accent2:#818cf8;--green:#22c55e;--amber:#f59e0b;--font:'Inter',sans-serif;--code:'JetBrains Mono',monospace}
+:root{--bg:#0a0c10;--bg2:#111318;--card:#181b22;--border:#1e2230;--text:#e2e8f0;--text2:#94a3b8;--accent:#6366f1;--accent2:#818cf8;--green:#22c55e;--amber:#f59e0b;--font:'Inter',sans-serif;--code:'JetBrains Mono',monospace}
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;line-height:1.6}
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh}
 ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-thumb{background:#2a2d3a;border-radius:10px}
-header{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(10,12,16,.85);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 24px;height:60px;display:flex;align-items:center;justify-content:space-between}
-header .logo{display:flex;align-items:center;gap:10px;font-size:17px;font-weight:800;color:var(--text)}
-header .logo span{color:var(--accent2)}
-header nav{display:flex;gap:2px}
-header nav a{padding:8px 14px;border-radius:6px;text-decoration:none;color:var(--text2);font-size:13px;font-weight:500;transition:.2s;cursor:pointer}
-header nav a:hover{background:rgba(99,102,241,.08);color:var(--text)}
-header nav a.active{color:var(--accent2);font-weight:600}
-main{margin-top:60px;min-height:calc(100vh - 60px)}
-.container{max-width:900px;margin:0 auto;padding:40px 24px}
-.hero{text-align:center;padding:60px 0 32px}
-.hero h1{font-size:42px;font-weight:800;letter-spacing:-1.5px;line-height:1.1}
+.app{display:flex;height:100vh}
+.sidebar{width:230px;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0}
+.logo{padding:16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px}
+.logo-mark{width:26px;height:26px;background:var(--accent);border-radius:6px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:11px;color:#fff}
+.logo-text{font-size:14px;font-weight:700}.logo-text span{color:var(--accent2)}
+.nav{flex:1;overflow-y:auto;padding:8px}
+.nav-item{display:flex;align-items:center;gap:8px;padding:8px 12px;margin:2px 0;border-radius:8px;cursor:pointer;font-size:13px;color:var(--text2);transition:.15s}
+.nav-item:hover{background:rgba(99,102,241,.08);color:var(--text)}
+.nav-item.active{background:rgba(99,102,241,.12);color:var(--accent2)}
+.nav-item .dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.nav-item .badge{margin-left:auto;font-size:11px;opacity:.5}
+.main{flex:1;display:flex;flex-direction:column;min-width:0}
+.topbar{display:flex;align-items:center;gap:12px;padding:0 20px;height:50px;border-bottom:1px solid var(--border);flex-shrink:0}
+.topbar .btn{padding:6px 14px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--text2);cursor:pointer;font-size:12px;transition:.15s;font-family:inherit}
+.topbar .btn:hover{border-color:var(--accent);color:var(--text)}
+.topbar .btn.pri{background:var(--accent);color:#fff;border-color:var(--accent)}
+.content{flex:1;overflow-y:auto;padding:24px 32px}
+
+/* Home */
+.home{max-width:700px;margin:0 auto}
+.hero{text-align:center;padding:40px 0 24px}
+.hero h1{font-size:36px;font-weight:800;letter-spacing:-1.5px;line-height:1.1}
 .hero h1 span{color:var(--accent2)}
-.hero p{color:var(--text2);max-width:550px;margin:16px auto 32px;font-size:16px;line-height:1.7}
-.hero .btn{display:inline-block;padding:12px 28px;background:var(--accent);color:#fff;border-radius:8px;text-decoration:none;font-weight:600;font-size:14px;transition:.2s;border:none;cursor:pointer;font-family:inherit}
-.hero .btn:hover{background:var(--accent2);transform:translateY(-1px)}
-.hero .stats{display:flex;justify-content:center;gap:48px;margin-top:36px}
-.hero .stats div{text-align:center}
-.hero .stats .num{font-size:26px;font-weight:800;color:var(--accent2)}
-.hero .stats .lbl{font-size:12px;color:var(--text2);margin-top:2px}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:24px}
-.card{padding:22px;border:1px solid var(--border);border-radius:12px;background:var(--card);cursor:pointer;transition:.25s}
-.card:hover{border-color:rgba(99,102,241,.3);transform:translateY(-2px);box-shadow:0 4px 16px rgba(99,102,241,.08)}
+.hero p{color:var(--text2);max-width:480px;margin:12px auto 24px;font-size:15px;line-height:1.6}
+.grid{display:grid;gap:12px}.grid-2{grid-template-columns:1fr 1fr}
+.card{padding:20px;border:1px solid var(--border);border-radius:12px;background:var(--card);cursor:pointer;transition:.2s}
+.card:hover{border-color:rgba(99,102,241,.3);transform:translateY(-1px)}
 .card .tag{font-size:11px;font-weight:600;padding:2px 10px;border-radius:20px;display:inline-block;margin-bottom:8px}
-.card h3{font-size:17px;font-weight:600;margin-bottom:4px}
-.card p{font-size:12px;color:var(--text2);line-height:1.5}
-.section-title{font-size:20px;font-weight:700;margin-bottom:16px;padding-bottom:8px;border-bottom:1px solid var(--border)}
-.lessons{max-width:700px;margin:0 auto}
-.acc{border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:8px;background:var(--card)}
-.acc-h{padding:14px 18px;cursor:pointer;display:flex;align-items:center;gap:10px;transition:.15s;font-size:14px;font-weight:600}
+.card h3{font-size:16px;font-weight:600}
+.card p{font-size:12px;color:var(--text2);margin-top:4px;line-height:1.5}
+
+/* Level */
+.lvl{max-width:620px;margin:0 auto}
+.lvl h2{font-size:20px;font-weight:700;margin-bottom:16px}
+.acc{border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:8px}
+.acc-h{padding:12px 16px;cursor:pointer;display:flex;align-items:center;gap:10px;transition:.15s}
 .acc-h:hover{background:rgba(255,255,255,.02)}
-.acc-h .arrow{font-size:10px;color:var(--text2);transition:.2s}
+.acc-h .arrow{font-size:9px;color:var(--text2);transition:.2s;flex-shrink:0}
 .acc-h .arrow.o{transform:rotate(90deg)}
-.acc-h .cnt{margin-left:auto;font-size:12px;color:var(--text2);font-weight:400}
+.acc-h h4{flex:1;font-size:13px;font-weight:600}
+.acc-h .cnt{font-size:11px;color:var(--text2)}
 .acc-body{border-top:1px solid var(--border)}
-.les{padding:10px 18px 10px 42px;cursor:pointer;display:flex;align-items:center;gap:10px;font-size:13px;transition:.1s;border-left:2px solid transparent}
+.les{padding:9px 16px 9px 36px;cursor:pointer;display:flex;align-items:center;gap:8px;font-size:13px;transition:.1s;border-left:2px solid transparent}
 .les:hover{background:rgba(255,255,255,.03)}
 .les.active{border-color:var(--accent);background:rgba(99,102,241,.06)}
-.les .chk{font-size:12px;width:16px;text-align:center;flex-shrink:0;color:var(--text2)}
+.les .chk{font-size:11px;width:14px;text-align:center;color:var(--text2);flex-shrink:0}
 .les .chk.d{color:var(--green)}
 .les .ttl{flex:1}
-.les .dur{font-size:11px;color:var(--text2)}
-.les-v{max-width:680px;margin:0 auto}
+.les .dur{font-size:10px;color:var(--text2)}
+
+/* Lesson */
+.les-v{max-width:660px;margin:0 auto}
 .les-v .crumb{font-size:12px;color:var(--text2);margin-bottom:4px}
-.les-v h1{font-size:26px;font-weight:700;letter-spacing:-.5px;margin-bottom:4px}
-.les-v .meta{font-size:12px;color:var(--text2);margin-bottom:16px}
+.les-v h1{font-size:22px;font-weight:700;letter-spacing:-.5px}
+.les-v .meta{font-size:12px;color:var(--text2);margin:4px 0 16px}
 .les-v .body{font-size:14px;line-height:1.8}
-.les-v .body p{margin-bottom:14px}
-.les-v .body code{font-family:var(--code);background:rgba(99,102,241,.1);padding:2px 6px;border-radius:4px;font-size:13px;color:var(--accent2)}
-.les-v .body pre{background:#0d0f14;border:1px solid var(--border);border-radius:8px;padding:16px;overflow-x:auto;margin-bottom:14px;font-size:13px;line-height:1.5}
-.challenge-box{margin:16px 0;padding:16px;border:1px solid rgba(245,158,11,.2);background:rgba(245,158,11,.05);border-radius:10px;cursor:pointer}
+.les-v .body p{margin-bottom:12px}
+.les-v .body code{font-size:13px;background:rgba(99,102,241,.1);padding:1px 5px;border-radius:4px}
+.les-v .body pre{background:#0d0f14;border:1px solid var(--border);border-radius:8px;padding:14px;overflow-x:auto;margin-bottom:12px;font-size:13px;line-height:1.5}
+.les-v .body h2{font-size:18px;font-weight:600;margin:20px 0 8px}
+.challenge-box{margin:16px 0;padding:14px;border:1px solid rgba(245,158,11,.2);background:rgba(245,158,11,.05);border-radius:8px;cursor:pointer}
 .challenge-box:hover{background:rgba(245,158,11,.08)}
 .challenge-box strong{color:var(--amber);font-size:13px}
-.challenge-box p{font-size:13px;color:var(--text2);margin-top:4px}
+.challenge-box p{font-size:13px;margin-top:4px;color:var(--text2)}
 .les-act{display:flex;gap:10px;margin-top:20px;padding-top:16px;border-top:1px solid var(--border)}
 .btn{padding:8px 20px;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;transition:.15s;border:none;font-family:inherit}
 .btn-p{background:var(--accent);color:#fff}
 .btn-p:hover{background:var(--accent2)}
 .btn-g{background:transparent;border:1px solid var(--border);color:var(--text2)}
 .btn-g:hover{border-color:var(--accent);color:var(--text)}
-textarea.ed{width:100%;height:250px;background:#0d0f14;color:#d4d4d4;border:none;padding:14px;font-family:monospace;font-size:13px;resize:none;border-radius:0 0 8px 8px}
-.chal-pv{height:170px;background:#fff;border-top:1px solid var(--border)}
-.chal-pv iframe{width:100%;height:100%;border:none}
-footer{text-align:center;padding:32px 24px;border-top:1px solid var(--border);color:var(--text2);font-size:12px;margin-top:48px}
-footer a{color:var(--accent2);text-decoration:none}
-footer a:hover{text-decoration:underline}
-@media(max-width:768px){.grid{grid-template-columns:1fr}.hero h1{font-size:30px}.container{padding:24px 16px}header{padding:0 12px}header nav a{padding:6px 10px;font-size:12px}}
+
+/* Challenge editor */
+.chal-view{max-width:720px;margin:0 auto}
+.chal-view .bar{display:flex;gap:0;border-bottom:1px solid var(--border);background:var(--bg2);align-items:center}
+.chal-view .bar span{font-size:12px;color:var(--text2);padding:6px 12px;flex:1}
+.chal-view .bar button{padding:6px 14px;border:none;background:var(--accent);color:#fff;cursor:pointer;font-size:12px;font-weight:500;font-family:inherit}
+.chal-view .bar button.sec{background:transparent;color:var(--text2);border-left:1px solid var(--border)}
+textarea.editor{width:100%;height:260px;background:#1e1e1e;color:#d4d4d4;border:none;padding:14px;font-family:monospace;font-size:13px;resize:none}
+.chal-preview{height:180px;background:#fff;border-top:1px solid var(--border)}
+.chal-preview iframe{width:100%;height:100%;border:none}
+.chal-feedback{margin-top:8px;font-size:13px;padding:8px}
+.ai-btn{position:fixed;bottom:20px;right:20px;width:50px;height:50px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#8b5cf6);border:none;color:#fff;font-size:20px;cursor:pointer;z-index:999;box-shadow:0 4px 16px rgba(99,102,241,.4);transition:.3s;display:flex;align-items:center;justify-content:center}.ai-btn:hover{transform:scale(1.1)}.ai-panel{position:fixed;bottom:80px;right:20px;width:360px;height:480px;background:var(--card);border:1px solid var(--border);border-radius:14px;z-index:998;display:none;flex-direction:column;overflow:hidden;box-shadow:0 12px 48px rgba(0,0,0,.5)}.ai-panel.o{display:flex}@media(max-width:640px){.ai-btn{width:44px;height:44px;font-size:18px;bottom:16px;right:16px}.ai-panel{width:calc(100vw - 32px);height:55vh;bottom:70px;right:16px;left:16px}}.ai-h{padding:14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}.ai-h .ico{width:28px;height:28px;border-radius:6px;background:linear-gradient(135deg,var(--accent),#8b5cf6);display:flex;align-items:center;justify-content:center;font-size:14px}.ai-h h3{font-size:13px;font-weight:600;flex:1}.ai-h button{background:none;border:none;color:var(--text2);cursor:pointer;font-size:16px}.ai-msgs{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:8px;font-size:13px;line-height:1.5}.ai-msg{max-width:88%;padding:10px 14px;border-radius:10px;animation:msgIn .2s ease}.ai-msg.b{background:var(--bg2);border:1px solid var(--border);align-self:flex-start}.ai-msg.u{background:var(--accent);color:#fff;align-self:flex-end}.ai-msg pre{background:rgba(0,0,0,.3);border-radius:6px;padding:8px;margin:6px 0;font-size:12px;overflow-x:auto}.ai-in{padding:10px;border-top:1px solid var(--border);display:flex;gap:8px}.ai-in input{flex:1;padding:8px 12px;border-radius:8px;border:1px solid var(--border);background:var(--bg2);color:var(--text);font-size:13px;outline:0;font-family:inherit}.ai-in input:focus{border-color:var(--accent)}.ai-in button{width:36px;height:36px;border-radius:8px;border:none;background:var(--accent);color:#fff;cursor:pointer;font-size:14px}@keyframes msgIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}@media(max-width:768px){.grid-2{grid-template-columns:1fr}.content{padding:16px}.hero h1{font-size:28px}.sidebar{width:200px}.stats{gap:16px}.stat-num{font-size:22px}}@media(max-width:640px){.sidebar{display:none}.content{padding:12px}.hero h1{font-size:24px}.hero p{font-size:14px}.stats{gap:12px;flex-wrap:wrap}.stat-item{min-width:80px}.stat-num{font-size:20px}.grid-2{gap:10px}.card{padding:16px}.card h3{font-size:15px}}
+@media(max-width:640px){.sidebar{display:none}.content{padding:12px}.hero h1{font-size:24px}}
 </style>
 </head>
 <body>
-<header>
-<div class="logo">Blaze<span>Web</span>Guide</div>
-<nav>
-<a onclick="showHome()">Home</a>
-<a onclick="showProfile()">Profile</a>
-<a onclick="showCert()">Cert</a>
-<a id="navAuth" onclick="showAuth()">Sign In</a>
-</nav>
-</header>
-<main><div class="container" id="content"><p style="text-align:center;padding:60px;color:var(--text2)">Loading...</p></div></main>
-<footer><p>&copy; 2026 BlazeWebGuide. Built by <a href="#">Randy Blaze</a></p></footer>
-
+<div class="app">
+<div class="sidebar">
+<div class="logo"><div class="logo-mark">B</div><div class="logo-text">Blaze<span>Web</span>Guide</div></div>
+<div class="nav" id="nav"></div>
+</div>
+<main class="main">
+<div class="topbar">
+<div style="flex:1"></div>
+<div class="btn" onclick="showHome()">Home</div>
+<div class="btn" onclick="showProfile()">Profile</div>
+<div class="btn" id="userBtn" onclick="showAuth()">Sign In</div>
+<div class="btn" onclick="showCert()">Cert</div>
+</div>
+<div class="content" id="content"></div>
+</main>
+</div>
+<button class="ai-btn" id="aiBtn" onclick="toggleAI()" title="Ask AI">🤖</button>
+<div class="ai-panel" id="aiPanel">
+<div class="ai-h"><div class="ico">🧠</div><h3>Blaze AI Tutor</h3><button onclick="toggleAI()">✕</button></div>
+<div class="ai-msgs" id="aiMsgs"><div class="ai-msg b">Hi! I'm your AI tutor. Ask me anything about web development!</div></div>
+<div class="ai-in"><input id="aiInp" placeholder="Ask a question..." onkeydown="if(event.key==='Enter')sendAI()"><button onclick="sendAI()">➤</button></div>
+</div>
 <script>
 const API='https://quest-seq-medicaid-surveys.trycloudflare.com';
 var LVL=null,MOD=null,LES=null,VIEW='home',CONTENT={},CONTENT_LOADED=false,PROGRESS={},USER=localStorage.getItem('bwg_user')||null;
+
 try{PROGRESS=JSON.parse(localStorage.getItem('bwg_prog')||'{}')}catch(e){}
-function saveP(){localStorage.setItem('bwg_prog',JSON.stringify(PROGRESS));if(USER)localStorage.setItem('bwg_prog_sync_'+USER,JSON.stringify(PROGRESS)),fetch(API+'/api/progress',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:USER,completed:Object.keys(PROGRESS).filter(k=>PROGRESS[k])})}).catch(function(){});}
+function saveP(){
+  localStorage.setItem('bwg_prog',JSON.stringify(PROGRESS));
+  // Sync to backend if logged in
+  if(USER){
+    localStorage.setItem('bwg_prog_sync_'+USER,JSON.stringify(PROGRESS));
+    fetch(API+'/api/progress',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:USER,completed:Object.keys(PROGRESS).filter(k=>PROGRESS[k])})}).catch(function(){});
+  }
+}
 function done(id){return!!PROGRESS[id]}
 function lvlP(id){const l=CURRICULUM[id];if(!l)return{d:0,t:0,p:0};let t=0,d=0;l.modules.forEach(m=>m.lessons.forEach(l=>{t++;if(PROGRESS[l.id])d++}));return{d,t,p:t?Math.round(d/t*100):0}}
 function lvlDone(id){const x=lvlP(id);return x.t>0&&x.p>=100}
 function lvlUnlocked(id){const i=['beginner','intermediate','advanced','pro'].indexOf(id);return i===0||lvlDone(['beginner','intermediate','advanced','pro'][i-1])}
-function updateNav(){var u=document.getElementById('navAuth');if(u)u.textContent=USER||'Sign In';}
-function render(){updateNav();if(VIEW==='home')renderHome();else if(VIEW==='level')renderLevel();else if(VIEW==='lesson')renderLesson();else if(VIEW==='challenge')renderChallenge();else if(VIEW==='profile')renderProfile();else if(VIEW==='cert')renderCert();}
-function renderHome(){const keys=['beginner','intermediate','advanced','pro'];const colors={beginner:'#22c55e',intermediate:'#3b82f6',advanced:'#f59e0b',pro:'#ef4444'};const names={beginner:'Beginner',intermediate:'Intermediate',advanced:'Advanced',pro:'Pro'};const descs={beginner:'Master HTML, CSS, JavaScript, and Git fundamentals. Build your first real projects.',intermediate:'Responsive design, APIs, ES6+, and deployment. Level up your development skills.',advanced:'React, Node.js, databases, and testing. Build full-stack applications.',pro:'System design, security, DevOps, and architecture. Production-ready expertise.'};let total=0;Object.values(CURRICULUM).forEach(l=>l.modules.forEach(m=>total+=m.lessons.length));let doneC=0;Object.values(PROGRESS).forEach(v=>{if(v)doneC++});document.getElementById('content').innerHTML='<div class="hero"><h1>Master Web Development<br><span>From Zero to Pro</span></h1><p>A complete, hands-on curriculum with '+total+' lessons covering everything from your first HTML tag to production-ready system design. Learn by building real projects with guidance from AI.</p><button class="btn" onclick="showLevel(\'beginner\')">Start Learning →</button><div class="stats"><div><div class="num">'+total+'</div><div class="lbl">Lessons</div></div><div><div class="num" style="color:var(--green)">4</div><div class="lbl">Levels</div></div><div><div class="num" style="color:var(--amber)">'+doneC+'</div><div class="lbl">Completed</div></div></div></div><h2 class="section-title">Choose Your Learning Path</h2><p style="color:var(--text2);font-size:13px;margin-bottom:8px">Each level builds on the previous. Complete a level to unlock the next.</p><div class="grid">'+keys.map(k=>'<div class="card" onclick="showLevel(\''+k+'\')"><div class="tag" style="background:'+colors[k]+'22;color:'+colors[k]+'">'+names[k]+(lvlDone(k)?' ✅':'')+(lvlUnlocked(k)?'':' 🔒')+'</div><h3>'+names[k]+'</h3><p>'+descs[k]+'</p></div>').join('')+'</div>';}
+
+function render(){
+  const keys=['beginner','intermediate','advanced','pro'];
+  const colors={beginner:'#22c55e',intermediate:'#3b82f6',advanced:'#f59e0b',pro:'#ef4444'};
+  const names={beginner:'Beginner',intermediate:'Intermediate',advanced:'Advanced',pro:'Pro'};
+  document.getElementById('nav').innerHTML='<div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--text2);padding:4px 12px 8px">Levels</div>'+
+    keys.map(k=>{const x=lvlP(k);return'<div class="nav-item '+(LVL===k?'active':'')+'" onclick="showLevel(\''+k+'\')"><span class="dot" style="background:'+colors[k]+'"></span>'+names[k]+(lvlDone(k)?' ✓':'')+(lvlUnlocked(k)?'':' 🔒')+'<span class="badge">'+x.d+'/'+x.t+'</span></div>';}).join('');
+  var ub=document.getElementById('userBtn');if(ub)ub.textContent=USER||'Sign In';
+  if(VIEW==='home')renderHome();
+  else if(VIEW==='level')renderLevel();
+  else if(VIEW==='lesson')renderLesson();
+  else if(VIEW==='challenge')renderChallenge();
+  else if(VIEW==='profile')renderProfile();
+  else if(VIEW==='cert')renderCert();
+}
+
+function renderHome(){
+  const keys=['beginner','intermediate','advanced','pro'];
+  const colors={beginner:'#22c55e',intermediate:'#3b82f6',advanced:'#f59e0b',pro:'#ef4444'};
+  const names={beginner:'Beginner',intermediate:'Intermediate',advanced:'Advanced',pro:'Pro'};
+  const descs={beginner:'Master HTML, CSS, JavaScript, and Git fundamentals. Build your first real projects with hands-on guidance.',intermediate:'Responsive design, APIs, ES6+, and deployment. Level up your development skills with real-world projects.',advanced:'React, Node.js, databases, and testing. Build full-stack applications from scratch.',pro:'System design, security, DevOps, and architecture. Production-ready expertise for senior roles.'};
+  let total=0;Object.values(CURRICULUM).forEach(l=>l.modules.forEach(m=>total+=m.lessons.length));
+  let doneC=0;Object.values(PROGRESS).forEach(v=>{if(v)doneC++});
+  document.getElementById('content').innerHTML='<div class="home"><div class="hero"><h1>Master Web Development<br><span>From Zero to Pro</span></h1><p>A complete, hands-on curriculum with '+total+' lessons covering everything from your first HTML tag to production-ready system design. Each level builds on the last — complete one to unlock the next.</p><div class="stats"><div class="stat-item"><div class="stat-num" style="color:var(--accent2)">'+total+'</div><div class="stat-label">Lessons</div></div><div class="stat-item"><div class="stat-num" style="color:var(--green)">4</div><div class="stat-label">Levels</div></div><div class="stat-item"><div class="stat-num" style="color:var(--amber)">'+doneC+'</div><div class="stat-label">Completed</div></div></div><button class="btn btn-primary" onclick="showLevel(\'beginner\')" style="font-size:15px;padding:12px 32px;">Start Learning →</button></div><div class="grid grid-2">'+
+    keys.map(k=>'<div class="card" onclick="showLevel(\''+k+'\')"><div class="tag" style="background:'+colors[k]+'22;color:'+colors[k]+'">'+names[k]+(lvlDone(k)?' ✅':'')+(lvlUnlocked(k)?'':' 🔒')+'</div><h3>'+names[k]+'</h3><p>'+descs[k]+'</p></div>').join('')+
+    '</div></div>';
+}
+
 function showHome(){VIEW='home';LVL=null;LES=null;render()}
+function showAuth(){
+  if(USER){
+    showProfile();
+    return;
+  }
+  var o=document.createElement('div');o.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:100;display:flex;align-items:center;justify-content:center';
+  o.innerHTML='<div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:28px;max-width:360px;width:90%;text-align:center"><h2 style="font-size:18px;font-weight:700;margin-bottom:6px">Welcome to BlazeWebGuide</h2><p style="font-size:13px;color:var(--text2);margin-bottom:16px">Choose a unique username to save your progress</p><input id="uname" placeholder="Your username" maxlength="20" autofocus style="width:100%;padding:10px 14px;border-radius:8px;border:1px solid var(--border);background:var(--bg2);color:var(--text);font-size:14px;margin-bottom:8px;outline:0"><div id="authMsg" style="font-size:12px;color:var(--amber);margin-bottom:8px"></div><button onclick="reg()" style="width:100%;padding:10px;border-radius:8px;border:none;background:var(--accent);color:#fff;cursor:pointer;font-size:14px;font-weight:500">Start Learning</button><button onclick="this.parentElement.parentElement.remove()" style="width:100%;padding:8px;border:none;background:transparent;color:var(--text2);cursor:pointer;font-size:12px;margin-top:6px">Cancel</button></div>';
+  document.body.appendChild(o);
+  setTimeout(function(){var e=document.getElementById('uname');if(e)e.focus();},100);
+}
+async function reg(){
+  var inp=document.getElementById('uname'),msg=document.getElementById('authMsg');
+  var n=inp?inp.value.trim():''; if(!n||n.length<2){if(msg)msg.textContent='Name must be 2+ characters';return;}
+  if(msg)msg.textContent='Checking...';
+  try{
+    var r=await fetch(API+'/api/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:n})});
+    var d=await r.json();
+    if(d.success||d.user){USER=n;localStorage.setItem('bwg_user',n);var o=document.querySelector('[style*="position:fixed;inset:0"]');if(o)o.remove();render();}
+    else if(d.error==='Username taken'){if(msg)msg.textContent='❌ Username already taken. Try another.';}
+    else{if(msg)msg.textContent='Error: '+d.error;}
+  }catch(e){
+    // Offline fallback
+    USER=n;localStorage.setItem('bwg_user',n);var o=document.querySelector('[style*="position:fixed;inset:0"]');if(o)o.remove();render();
+  }
+}
 function showLevel(id){LVL=id;MOD=null;LES=null;VIEW='level';render();renderLevel()}
-function renderLevel(){const l=CURRICULUM[LVL];if(!l)return;const x=lvlP(LVL);const colors={beginner:'#22c55e',intermediate:'#3b82f6',advanced:'#f59e0b',pro:'#ef4444'};var n='<div class="lessons"><h2 class="section-title" style="border:none;padding:0">'+l.title+' <span style="font-size:14px;color:var(--text2);font-weight:400">'+x.d+'/'+x.t+' lessons</span></h2>';l.modules.forEach(mod=>{const open=MOD===mod.id;n+='<div class="acc"><div class="acc-h" onclick="MOD=MOD===\''+mod.id+'\'?null:\''+mod.id+'\';renderLevel()"><span class="arrow '+(open?'o':'')+'">▶</span>'+mod.title+'<span class="cnt">'+mod.lessons.length+'</span></div>';if(open)n+='<div class="acc-body">'+mod.lessons.map(l=>'<div class="les '+(LES===l.id?'active':'')+'" onclick="openLes(\''+mod.id+'\',\''+l.id+'\')"><span class="chk '+(done(l.id)?'d':'')+'">'+(done(l.id)?'✓':'○')+'</span><span class="ttl">'+l.title+'</span><span class="dur">'+l.duration+'</span></div>').join('')+'</div>';n+='</div>';});n+='<div style="margin-top:16px"><button class="btn btn-g" onclick="showHome()">← Back</button></div></div>';document.getElementById('content').innerHTML=n;}
+
+function renderLevel(){
+  const l=CURRICULUM[LVL];if(!l)return;
+  const x=lvlP(LVL);const colors={beginner:'#22c55e',intermediate:'#3b82f6',advanced:'#f59e0b',pro:'#ef4444'};
+  let html='<div class="lvl"><div style="display:flex;align-items:center;gap:10px;margin-bottom:16px"><span style="width:8px;height:8px;border-radius:50%;background:'+colors[LVL]+';flex-shrink:0"></span><h2>'+l.title+'</h2><span style="font-size:12px;color:var(--text2)">'+x.d+'/'+x.t+'</span></div>';
+  l.modules.forEach(mod=>{
+    const open=MOD===mod.id;
+    html+='<div class="acc"><div class="acc-h" onclick="MOD=MOD===\''+mod.id+'\'?null:\''+mod.id+'\';renderLevel()"><span class="arrow '+(open?'o':'')+'">▶</span><h4>'+mod.title+'</h4><span class="cnt">'+mod.lessons.length+'</span></div>';
+    if(open)html+='<div class="acc-body">'+mod.lessons.map(l=>'<div class="les '+(LES===l.id?'active':'')+'" onclick="openLes(\''+mod.id+'\',\''+l.id+'\')"><span class="chk '+(done(l.id)?'d':'')+'">'+(done(l.id)?'✓':'○')+'</span><span class="ttl">'+l.title+'</span><span class="dur">'+l.duration+'</span></div>').join('')+'</div>';
+    html+='</div>';
+  });
+  html+='<button class="btn btn-g" onclick="showHome()" style="margin-top:12px">← Back</button></div>';
+  document.getElementById('content').innerHTML=html;
+}
+
 function openLes(mid,lid){MOD=mid;LES=lid;VIEW='lesson';render();renderLesson()}
-function renderLesson(){const l=findLes();if(!l)return;const c=CONTENT[l.id];var n='<div class="les-v"><div class="crumb">'+getLvlName()+' / '+getModName()+'</div><h1>'+l.title+'</h1><div class="meta">'+l.duration+' · '+(done(l.id)?'✅ Completed':'Not completed')+'</div><div class="body">'+(c&&c.content?c.content:'<p style="color:var(--text2)">Loading content...</p>')+'</div>'+(c&&c.codeExample?'<pre><code>'+esc(c.codeExample)+'</code></pre>':'');if(l.challenge)n+='<div class="challenge-box" onclick="startChallenge()"><strong>🎯 Mini Challenge — Tap to solve</strong><p>'+l.challenge+'</p></div>';n+='<div class="les-act">'+(done(l.id)?'<button class="btn btn-p" onclick="nextLes()">Next →</button>':'')+'<button class="btn btn-g" onclick="showLevel(\''+LVL+'\')">← Back</button></div></div>';document.getElementById('content').innerHTML=n;if(!CONTENT_LOADED)loadContent();}
-function loadContent(){fetch('curriculum_content.js').then(r=>r.text()).then(t=>{try{var s=t.indexOf('{'),d=0,e=-1;for(var i=s;i<t.length;i++){if(t[i]==='{')d++;else if(t[i]==='}'){d--;if(d===0){e=i;break;}}}if(e>s)CONTENT=JSON.parse(t.substring(s,e+1));CONTENT_LOADED=true;if(VIEW==='lesson'||VIEW==='challenge')render();}catch(e){}}).catch(function(){});}
-function startChallenge(){VIEW='challenge';const l=findLes();if(!l)return;var s='<!DOCTYPE html>\n<html>\n<head><title>Challenge</title></head>\n<body>\n  <!-- Write your code here -->\n</body>\n</html>';document.getElementById('content').innerHTML='<div class="les-v"><div style="display:flex;align-items:center;gap:12px;margin-bottom:12px"><button class="btn btn-g" onclick="openLes(\''+MOD+'\',\''+LES+'\')" style="padding:6px 12px">← Back</button><h2 style="font-size:18px;font-weight:600">🎯 Solve the Challenge</h2></div><div style="border:1px solid var(--border);border-radius:10px;overflow:hidden"><div style="display:flex;padding:8px 12px;background:var(--bg2);border-bottom:1px solid var(--border);align-items:center"><span style="flex:1;font-size:13px;color:var(--text2)">Write code then submit for AI review</span><button onclick="submitChallenge()" style="padding:6px 18px;border:none;background:var(--accent);color:#fff;cursor:pointer;border-radius:6px;font-size:13px;font-weight:500">▶ Submit</button></div><textarea class="ed" id="chalTA" spellcheck="false"></textarea><div class="chal-pv"><iframe id="chalPrev"></iframe></div></div><div id="chalFB" style="margin-top:8px;font-size:13px"></div></div>';document.getElementById('chalTA').value=s;document.getElementById('chalPrev').srcdoc=s;}
-function submitChallenge(){var ta=document.getElementById('chalTA');if(!ta)return;var code=ta.value;document.getElementById('chalPrev').srcdoc=code;var fb=document.getElementById('chalFB');fb.innerHTML='🤖 AI reviewing...';fetch('https://keith-switching-meaning-calculate.trycloudflare.com/api/tutor',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:'Review this code. Be strict:```html\\n'+code+'\\n```Reply PASS if correct HTML, FAIL if wrong.',username:USER||''})}).then(r=>r.json()).then(d=>{var r=d.reply||'';if(r.startsWith('PASS')){fb.innerHTML='<span style="color:var(--green);font-weight:600">✅ Correct! Moving forward...</span>';PROGRESS[LES]=true;saveP();setTimeout(nextLes,800);}else{fb.innerHTML='<span style="color:var(--amber);display:block;padding:10px;background:rgba(245,158,11,.1);border-radius:8px">⚠️ '+r.replace(/FAIL/g,'').trim()+'</span>';}}).catch(function(){fb.innerHTML='<span style="color:var(--amber)">⚠️ AI unavailable. Make sure your code has proper HTML structure.</span>';});}
+
+function renderLesson(){
+  const l=findLes();if(!l){document.getElementById('content').innerHTML='<p>Lesson not found</p>';return;}
+  const c=CONTENT[l.id];
+  let html='<div class="les-v"><div class="crumb">'+getLvlName()+' / '+getModName()+'</div><h1>'+l.title+'</h1><div class="meta">'+l.duration+' · '+(done(l.id)?'✅ Completed':'Not completed')+'</div><div class="body">';
+  if(c&&c.content)html+=c.content;
+  else html+='<p>Loading content...</p>';
+  html+='</div>';
+  if(c&&c.codeExample)html+='<pre><code>'+esc(c.codeExample)+'</code></pre>';
+  if(l.challenge)html+='<div class="challenge-box" onclick="startChallenge()"><strong>🎯 Mini Challenge — Tap to solve</strong><p>'+l.challenge+'</p></div>';
+  html+='<div class="les-act">'+(done(l.id)?'<button class="btn btn-g" onclick="nextLes()">Next →</button>':'')+'<button class="btn btn-g" onclick="showLevel(\''+LVL+'\')">← Back</button></div></div>';
+  document.getElementById('content').innerHTML=html;
+  
+  // Load content if not loaded
+  if(!CONTENT_LOADED)loadContent();
+}
+
+function loadContent(){
+  fetch('curriculum_content.js').then(r=>r.text()).then(t=>{
+    try{
+      var s=t.indexOf('{'),d=0,e=-1;
+      for(var i=s;i<t.length;i++){if(t[i]==='{')d++;else if(t[i]==='}'){d--;if(d===0){e=i;break;}}}
+      if(e>s)CONTENT=JSON.parse(t.substring(s,e+1));
+      CONTENT_LOADED=true;
+      if(VIEW==='lesson')renderLesson();
+      if(VIEW==='challenge')renderChallenge();
+    }catch(e){}
+  }).catch(function(){});
+}
+
+var CHAL_CODE='';
+function startChallenge(){
+  VIEW='challenge';
+  const l=findLes();if(!l)return;
+  CHAL_CODE=l.codeExample||'<!DOCTYPE html>\n<html>\n<head><title>Challenge</title></head>\n<body>\n  <!-- Your solution -->\n</body>\n</html>';
+  document.getElementById('content').innerHTML='<div class="chal-view"><div style="display:flex;align-items:center;gap:12px;margin-bottom:12px"><button class="btn btn-g" onclick="openLes(\''+MOD+'\',\''+LES+'\')" style="padding:6px 12px">← Back</button><h2 style="font-size:16px;font-weight:600">🎯 Solve the Challenge</h2></div>'+
+    '<div style="border:1px solid var(--border);border-radius:8px;overflow:hidden"><div class="bar"><span>Write code and submit</span><button onclick="submitChallenge()">▶ Submit</button><button class="sec" onclick="resetChallenge()">↺ Reset</button></div>'+
+    '<textarea class="editor" id="chalTA" spellcheck="false"></textarea>'+
+    '<div class="chal-preview"><iframe id="chalPrev"></iframe></div></div>'+
+    '<div id="chalFB" class="chal-feedback"></div></div>';
+  document.getElementById('chalTA').value=CHAL_CODE;
+  document.getElementById('chalPrev').srcdoc=CHAL_CODE;
+}
+
+function submitChallenge(){
+  var ta=document.getElementById('chalTA');if(!ta)return;
+  var code=ta.value;
+  document.getElementById('chalPrev').srcdoc=code;
+  var fb=document.getElementById('chalFB');
+  fb.innerHTML='🤖 AI reviewing...';
+  
+  fetch('https://keith-switching-meaning-calculate.trycloudflare.com/api/tutor',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({message:'Review this code for a challenge. Be strict:```html\n'+code+'\n```\nDoes this code show proper HTML structure with tags and content? Reply PASS [message] if yes, FAIL [error] if no.',username:USER||''})
+  }).then(r=>r.json()).then(d=>{
+    var r=d.reply||'';
+    if(r.startsWith('PASS')){
+      fb.innerHTML='<span style="color:var(--green);font-weight:600">✅ Correct! Moving forward...</span>';
+      PROGRESS[LES]=true;saveP();
+      setTimeout(goNextLes, 800);
+    } else {
+      fb.innerHTML='<span style="color:var(--amber);background:rgba(245,158,11,.1);padding:10px;border-radius:8px;display:block">⚠️ '+r.replace(/FAIL/g,'').trim()+'</span>';
+      // Stay in editor - user can try again
+    }
+  }).catch(function(){
+    fb.innerHTML='<span style="color:var(--amber)">⚠️ AI unavailable. Make sure your code has proper HTML structure.</span>';
+  });
+}
+
 function nextLes(){const l=findNextLes();if(l){LVL=l.l;MOD=l.m;LES=l.id;VIEW='lesson';render();renderLesson();}else showLevel(LVL);}
-function findLes(){if(!LVL||!LES)return null;for(const m of(CURRICULUM[LVL]&&CURRICULUM[LVL].modules||[]))for(const l of m.lessons)if(l.id===LES)return l;return null;}
-function findNextLes(){const lvl=CURRICULUM[LVL];if(!lvl)return null;for(let mi=0;mi<lvl.modules.length;mi++)for(let li=0;li<lvl.modules[mi].lessons.length;li++){if(lvl.modules[mi].lessons[li].id===LES){if(li+1<lvl.modules[mi].lessons.length)return{id:lvl.modules[mi].lessons[li+1].id,m:lvl.modules[mi].id,l:LVL};if(mi+1<lvl.modules.length)return{id:lvl.modules[mi+1].lessons[0].id,m:lvl.modules[mi+1].id,l:LVL};return null;}}return null;}
+
+function findLes(){
+  if(!LVL||!LES)return null;
+  for(const m of(CURRICULUM[LVL]&&CURRICULUM[LVL].modules||[]))for(const l of m.lessons)if(l.id===LES)return l;
+  return null;
+}
+function findNextLes(){
+  const lvl=CURRICULUM[LVL];if(!lvl)return null;
+  for(let mi=0;mi<lvl.modules.length;mi++)for(let li=0;li<lvl.modules[mi].lessons.length;li++){
+    if(lvl.modules[mi].lessons[li].id===LES){
+      if(li+1<lvl.modules[mi].lessons.length)return{id:lvl.modules[mi].lessons[li+1].id,m:lvl.modules[mi].id,l:LVL};
+      if(mi+1<lvl.modules.length)return{id:lvl.modules[mi+1].lessons[0].id,m:lvl.modules[mi+1].id,l:LVL};
+      return null;
+    }
+  }return null;
+}
 function getLvlName(){const l=CURRICULUM[LVL];return l?l.title:''}
 function getModName(){if(!LVL||!MOD)return'';for(const m of(CURRICULUM[LVL]&&CURRICULUM[LVL].modules||[]))if(m.id===MOD)return m.title;return''}
-function renderProfile(){let total=0;Object.values(CURRICULUM).forEach(l=>l.modules.forEach(m=>total+=m.lessons.length));let doneC=0;Object.values(PROGRESS).forEach(v=>{if(v)doneC++});const colors={beginner:'#22c55e',intermediate:'#3b82f6',advanced:'#f59e0b',pro:'#ef4444'};const names={beginner:'Beginner',intermediate:'Intermediate',advanced:'Advanced',pro:'Pro'};let html='<h2 class="section-title">'+(USER||'Guest')+'</h2><p style="color:var(--text2);margin-bottom:16px">'+doneC+'/'+total+' lessons completed</p>';['beginner','intermediate','advanced','pro'].forEach(k=>{const x=lvlP(k);html+='<div style="display:flex;align-items:center;gap:10px;padding:12px 16px;border:1px solid var(--border);border-radius:8px;margin-bottom:6px;background:var(--card)"><span style="width:8px;height:8px;border-radius:50%;background:'+colors[k]+';flex-shrink:0"></span><span style="flex:1;font-size:14px">'+names[k]+(lvlDone(k)?' ✅':'')+(lvlUnlocked(k)?'':' 🔒')+'</span><span style="font-size:12px;color:var(--text2)">'+x.d+'/'+x.t+'</span><div style="width:60px;height:4px;background:rgba(255,255,255,.05);border-radius:4px"><div style="height:100%;width:'+x.p+'%;background:'+colors[k]+';border-radius:4px"></div></div></div>';});if(USER)html+='<button class="btn btn-g" onclick="localStorage.removeItem(\'bwg_user\');USER=null;render()" style="margin-top:12px;color:var(--amber);border-color:rgba(245,158,11,.3)">Sign Out</button>';html+='<button class="btn btn-g" onclick="showHome()" style="margin-top:8px">← Back</button>';document.getElementById('content').innerHTML=html;}
+
+function renderProfile(){
+  const keys=['beginner','intermediate','advanced','pro'];
+  const colors={beginner:'#22c55e',intermediate:'#3b82f6',advanced:'#f59e0b',pro:'#ef4444'};
+  const names={beginner:'Beginner',intermediate:'Intermediate',advanced:'Advanced',pro:'Pro'};
+  let total=0;Object.values(CURRICULUM).forEach(l=>l.modules.forEach(m=>total+=m.lessons.length));
+  let doneC=0;Object.values(PROGRESS).forEach(v=>{if(v)doneC++});
+  let html='<div style="max-width:500px;margin:0 auto;text-align:center"><div style="width:48px;height:48px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:22px;margin:0 auto 8px">👤</div><h2 style="font-size:18px;font-weight:700">'+(USER||'Guest')+'</h2><p style="font-size:13px;color:var(--text2);margin-bottom:16px">'+doneC+'/'+total+' completed</p>';
+  keys.forEach(k=>{const x=lvlP(k);html+='<div style="display:flex;align-items:center;gap:10px;padding:10px 14px;border:1px solid var(--border);border-radius:8px;margin-bottom:6px;background:var(--card)"><span style="width:7px;height:7px;border-radius:50%;background:'+colors[k]+';flex-shrink:0"></span><span style="flex:1;font-size:13px">'+names[k]+(lvlDone(k)?' ✅':'')+(lvlUnlocked(k)?'':' 🔒')+'</span><span style="font-size:12px;color:var(--text2)">'+x.d+'/'+x.t+'</span><div style="width:50px;height:4px;background:rgba(255,255,255,.05);border-radius:2px"><div style="height:100%;width:'+x.p+'%;background:'+colors[k]+';border-radius:2px"></div></div></div>';});
+  if(USER)html+='<button class="btn btn-g" onclick="localStorage.removeItem(\'bwg_user\');USER=null;render()" style="margin-top:12px;color:var(--amber)">Sign Out</button>';
+  html+='<button class="btn btn-g" onclick="showHome()" style="margin-top:8px">← Back</button></div>';
+  document.getElementById('content').innerHTML=html;
+}
+
 function showProfile(){VIEW='profile';render()}
 function showCert(){VIEW='cert';render()}
-function renderCert(){const names={beginner:'Beginner',intermediate:'Intermediate',advanced:'Advanced',pro:'Pro'};const colors={beginner:'#22c55e',intermediate:'#3b82f6',advanced:'#f59e0b',pro:'#ef4444'};let html='<h2 class="section-title">🏆 Certifications</h2><p style="color:var(--text2);font-size:13px;margin-bottom:12px">Complete all lessons in a level to earn a certificate.</p>';['beginner','intermediate','advanced','pro'].forEach(k=>{const d=lvlDone(k),x=lvlP(k);html+='<div style="padding:16px;border:1px solid '+(d?colors[k]:'var(--border)')+';border-radius:10px;margin-bottom:8px;background:var(--card)"><div style="font-weight:600;font-size:14px;margin-bottom:4px">'+names[k]+(d?' ✅':'')+'</div>'+(d?'<span style="font-size:12px;color:var(--green)">Completed!</span>':'<div style="height:4px;background:rgba(255,255,255,.05);border-radius:4px"><div style="height:100%;width:'+x.p+'%;background:'+colors[k]+';border-radius:4px"></div></div>')+'</div>';});html+='<button class="btn btn-g" onclick="showHome()" style="margin-top:12px">← Back</button>';document.getElementById('content').innerHTML=html;}
+
+function renderCert(){
+  const keys=['beginner','intermediate','advanced','pro'];
+  const colors={beginner:'#22c55e',intermediate:'#3b82f6',advanced:'#f59e0b',pro:'#ef4444'};
+  const names={beginner:'Beginner',intermediate:'Intermediate',advanced:'Advanced',pro:'Pro'};
+  let html='<div style="max-width:500px;margin:0 auto;text-align:center"><h2 style="font-size:18px;font-weight:700;margin-bottom:16px">🏆 Certifications</h2>';
+  keys.forEach(k=>{const x=lvlP(k),dl=lvlDone(k);html+='<div style="padding:16px;border:1px solid '+(dl?colors[k]:'var(--border)')+';border-radius:10px;margin-bottom:8px;background:var(--card);text-align:left"><div style="font-weight:600;font-size:14px">'+names[k]+(dl?' ✅':'')+'</div>'+(dl?'<button class="btn btn-g" onclick="showCert()" style="margin-top:4px;font-size:11px;padding:4px 12px">View Certificate</button>':'<div style="height:4px;background:rgba(255,255,255,.05);border-radius:2px;margin-top:8px"><div style="height:100%;width:'+x.p+'%;background:'+colors[k]+';border-radius:2px"></div></div>')+'</div>';});
+  html+='<button class="btn btn-g" onclick="showHome()" style="margin-top:12px">← Back</button></div>';
+  document.getElementById('content').innerHTML=html;
+}
+
+function toggleAI(){var p=document.getElementById('aiPanel');p.classList.toggle('o');if(p.classList.contains('o'))document.getElementById('aiInp').focus()}
+function sendAI(){
+ var i=document.getElementById('aiInp'),m=i.value.trim();if(!m)return;
+ var c=document.getElementById('aiMsgs');
+ var d=document.createElement('div');d.className='ai-msg u';d.textContent=m;c.appendChild(d);i.value='';
+ var t=document.createElement('div');t.className='ai-msg b';t.id='typing';t.textContent='...';c.appendChild(t);c.scrollTop=c.scrollHeight;
+ fetch('https://keith-switching-meaning-calculate.trycloudflare.com/api/tutor',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:m,username:USER||''})})
+ .then(r=>r.json()).then(d=>{var e=document.getElementById('typing');if(e)e.remove();var x=document.createElement('div');x.className='ai-msg b';x.innerHTML=d.reply.replace(/\n/g,'<br>');c.appendChild(x);c.scrollTop=c.scrollHeight;})
+ .catch(function(){var e=document.getElementById('typing');if(e)e.remove();var x=document.createElement('div');x.className='ai-msg b';x.textContent='Sorry, I had trouble. Ask again!';c.appendChild(x);c.scrollTop=c.scrollHeight;});
+}
 function esc(s){if(!s)return'';return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
-function showAuth(){if(USER){showProfile();return;}var o=document.createElement('div');o.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:200;display:flex;align-items:center;justify-content:center';o.innerHTML='<div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:32px;max-width:360px;width:90%;text-align:center"><h2 style="font-size:18px;font-weight:700;margin-bottom:6px">Welcome</h2><p style="font-size:13px;color:var(--text2);margin-bottom:20px">Enter your name to track progress</p><input id="uname" placeholder="Your name" maxlength="20" autofocus style="width:100%;padding:10px 14px;border-radius:8px;border:1px solid var(--border);background:var(--bg2);color:var(--text);font-size:14px;margin-bottom:8px;outline:0;font-family:inherit"><div id="authMsg" style="font-size:12px;color:var(--amber);margin-bottom:8px"></div><button onclick="reg()" style="width:100%;padding:10px;border-radius:8px;border:none;background:var(--accent);color:#fff;cursor:pointer;font-size:14px;font-weight:500;font-family:inherit">Start Learning</button><button onclick="this.parentElement.parentElement.remove()" style="width:100%;padding:8px;border:none;background:transparent;color:var(--text2);cursor:pointer;font-size:12px;margin-top:6px;font-family:inherit">Cancel</button></div>';document.body.appendChild(o);setTimeout(function(){var e=document.getElementById('uname');if(e)e.focus();},100);}
-async function reg(){var inp=document.getElementById('uname'),msg=document.getElementById('authMsg');var n=inp?inp.value.trim():'';if(!n||n.length<2){if(msg)msg.textContent='Name must be 2+ characters';return;}if(msg)msg.textContent='Checking...';try{var r=await fetch(API+'/api/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:n})});var d=await r.json();if(d.success||d.user){USER=n;localStorage.setItem('bwg_user',n);var o=document.querySelector('[style*=\"position:fixed;inset:0\"]');if(o)o.remove();render();}else if(d.error==='Username taken'){if(msg)msg.textContent='❌ Name taken. Try another.';}else{if(msg)msg.textContent='Error: '+d.error;}}catch(e){USER=n;localStorage.setItem('bwg_user',n);var o=document.querySelector('[style*=\"position:fixed;inset:0\"]');if(o)o.remove();render();}}
-function init(){if(typeof CURRICULUM==='undefined'||!CURRICULUM.beginner){document.getElementById('content').innerHTML='<p style="text-align:center;padding:60px;color:var(--text2)">Loading curriculum...</p>';setTimeout(init,200);return;}render();}
+
+function init(){
+  if(typeof CURRICULUM==='undefined'||!CURRICULUM.beginner){
+    document.getElementById('content').innerHTML='<p style="text-align:center;padding:40px">Loading...</p>';
+    setTimeout(init,200);return;
+  }
+  render();
+}
 init();
 </script>
 </body>
