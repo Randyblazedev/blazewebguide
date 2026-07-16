@@ -217,6 +217,7 @@ function renderAll() {
   renderLevelSelector();
   if(currentLevel) renderModuleList();
   if(currentView==='landing') renderLanding();
+  else if(currentView==='level') renderLevelView();
   else if(currentView==='lesson'&&currentLesson) renderLesson();
   else if(currentView==='playground') renderPlayground();
   else if(currentView==='cert') renderCert();
@@ -262,7 +263,63 @@ function renderLesson() {
 }
 
 function showLanding(){currentLevel=null;currentLesson=null;currentView='landing';document.getElementById('moduleList').style.display='none';renderAll();}
-function switchLevel(id){currentLevel=id;currentModule=CURRICULUM[id]?.modules?.[0]?.id||null;currentLesson=null;const el=document.getElementById('moduleList');el.style.display='block';renderAll();if(currentModule)toggleModule(currentModule);}
+
+function toggleModule(id){currentModule=currentModule===id?null:id;renderLevelView();}
+function switchLevel(id){
+  currentLevel=id;
+  currentModule=null;
+  currentLesson=null;
+  currentView='level';
+  const el=document.getElementById('moduleList');
+  el.style.display='block';
+  renderAll();
+  renderLevelView();
+}
+
+function renderLevelView(){
+  const lvl=CURRICULUM[currentLevel];
+  if(!lvl) return;
+  const p=getProgress();
+  const names={'beginner':'Beginner','intermediate':'Intermediate','advanced':'Advanced','pro':'Pro'};
+  const colors={'beginner':'#22c55e','intermediate':'#3b82f6','advanced':'#f59e0b','pro':'#ef4444'};
+  const lvlProg=getLevelProgress(currentLevel);
+  
+  let html='<div style="max-width:800px;margin:0 auto;">';
+  html+='<div style="display:flex;align-items:center;gap:12px;margin-bottom:24px;">';
+  html+='<span style="width:14px;height:14px;border-radius:50%;background:'+lvl.color+';flex-shrink:0;"></span>';
+  html+='<div><h2 style="font-size:22px;font-weight:800;">'+lvl.title+'</h2><p style="font-size:13px;color:var(--text-sec);">'+lvl.subtitle+' — '+lvlProg.done+'/'+lvlProg.total+' completed ('+lvlProg.pct+'%)</p></div>';
+  html+='</div>';
+  
+  lvl.modules.forEach((mod,mi)=>{
+    const completed=mod.lessons.filter(l=>p[l.id]).length;
+    const open=currentModule===mod.id;
+    html+='<div style="margin-bottom:8px;border:1px solid var(--border);border-radius:10px;overflow:hidden;background:var(--card);">';
+    html+='<div onclick="toggleModule(\''+mod.id+'\')" style="padding:14px 16px;cursor:pointer;display:flex;align-items:center;gap:12px;">';
+    html+='<span style="font-size:10px;transition:transform 0.2s;'+(open?'transform:rotate(90deg);':'')+'">▶</span>';
+    html+='<span style="flex:1;font-weight:600;font-size:14px;">'+mod.title+'</span>';
+    html+='<span style="font-size:12px;color:var(--text-sec);">'+completed+'/'+mod.lessons.length+'</span>';
+    html+='<div style="width:60px;height:5px;background:rgba(255,255,255,0.05);border-radius:3px;"><div style="height:100%;width:'+(mod.lessons.length?Math.round(completed/mod.lessons.length*100):0)+'%;background:'+lvl.color+';border-radius:3px;"></div></div>';
+    html+='</div>';
+    if(open){
+      html+='<div style="border-top:1px solid var(--border);padding:4px 0;">';
+      mod.lessons.forEach(l=>{
+        const done=p[l.id]?'completed':'';
+        const active=currentLesson===l.id?'active':'';
+        html+='<div onclick="openLesson(\''+mod.id+'\',\''+l.id+'\')" style="padding:10px 16px 10px 40px;cursor:pointer;display:flex;align-items:center;gap:10px;font-size:13px;transition:0.2s;border-left:2px solid '+(active?'var(--accent)':'transparent')+'" onmouseover="this.style.background=\'rgba(255,255,255,0.03)\'" onmouseout="this.style.background=\'transparent\'">';
+        html+='<span style="font-size:11px;'+(done?'color:var(--success);':'color:var(--text-sec);')+'">'+(done?'✓':'○')+'</span>';
+        html+='<span style="flex:1;'+(done?'color:var(--success);':'')+(active?'color:var(--accent-light);':'')+'">'+l.title+'</span>';
+        html+='<span style="font-size:11px;color:var(--text-sec);">'+l.duration+'</span>';
+        html+='</div>';
+      });
+      html+='</div>';
+    }
+    html+='</div>';
+  });
+  
+  html+='<div style="text-align:center;margin-top:16px;"><button class="btn btn-ghost" onclick="showLanding()" style="font-size:12px;">← Back to Levels</button></div>';
+  html+='</div>';
+  document.getElementById('contentArea').innerHTML=html;
+}
 function toggleModule(id){currentModule=currentModule===id?null:id;renderModuleList();}
 function openLesson(mid,lid){currentModule=mid;currentLesson=lid;renderModuleList();renderLesson();}
 function showPlayground(){currentView='playground';renderPlayground();}
