@@ -384,13 +384,42 @@ function showLevelCert(level){
 
 function toggleAI(){var p=document.getElementById('aiPanel');p.classList.toggle('o');if(p.classList.contains('o'))document.getElementById('aiInp').focus()}
 function sendAI(){
- var i=document.getElementById('aiInp'),m=i.value.trim();if(!m)return;
+ var i=document.getElementById('aiInp'),m=i.value.trim().toLowerCase();if(!m)return;
  var c=document.getElementById('aiMsgs');
- var d=document.createElement('div');d.className='ai-msg u';d.textContent=m;c.appendChild(d);i.value='';
+ var d=document.createElement('div');d.className='ai-msg u';d.textContent=i.value.trim();c.appendChild(d);i.value='';
  var t=document.createElement('div');t.className='ai-msg b';t.id='typing';t.textContent='...';c.appendChild(t);c.scrollTop=c.scrollHeight;
- fetch('https://keith-switching-meaning-calculate.trycloudflare.com/api/tutor',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:m,username:USER||''})})
- .then(r=>r.json()).then(d=>{var e=document.getElementById('typing');if(e)e.remove();var x=document.createElement('div');x.className='ai-msg b';x.innerHTML=d.reply.replace(/\n/g,'<br>');c.appendChild(x);c.scrollTop=c.scrollHeight;})
- .catch(function(){var e=document.getElementById('typing');if(e)e.remove();var x=document.createElement('div');x.className='ai-msg b';x.textContent='Sorry, I had trouble. Ask again!';c.appendChild(x);c.scrollTop=c.scrollHeight;});
+ 
+ var answers={
+  'html':'HTML (HyperText Markup Language) is the backbone of every website. It uses tags like <code>&lt;h1&gt;</code>, <code>&lt;p&gt;</code>, and <code>&lt;div&gt;</code> to structure content. Think of it as the skeleton of a webpage.',
+  'css':'CSS (Cascading Style Sheets) makes your website look good. It controls colors, fonts, layout, and responsiveness. Use classes and IDs to target elements and style them.',
+  'javascript':'JavaScript adds interactivity to your site. It runs in the browser and can handle clicks, form submissions, API calls, and dynamic content updates. Start with variables, functions, and DOM manipulation.',
+  'tailwind':'Tailwind CSS is a utility-first framework. Instead of writing custom CSS, you use classes like <code>text-center</code>, <code>bg-blue-500</code>, and <code>p-4</code> directly in your HTML. Fast for prototyping.',
+  'react':'React is a JavaScript library for building user interfaces. It uses components, state, and props. JSX lets you write HTML-like syntax inside JavaScript. Great for single-page apps.',
+  'flexbox':'Flexbox is a CSS layout mode that distributes space along a single axis. Use <code>display:flex</code> on the container, then <code>justify-content</code> for horizontal alignment and <code>align-items</code> for vertical.',
+  'grid':'CSS Grid creates 2D layouts with rows and columns. Define a grid container with <code>display:grid</code>, then use <code>grid-template-columns</code> and <code>gap</code> to arrange items.',
+  'responsive':'Responsive design makes your site work on all screen sizes. Use media queries (<code>@media (max-width:768px)</code>), relative units (rem, %), and flexible layouts (Flexbox/Grid).',
+  'api':'An API (Application Programming Interface) lets your website talk to other services. Use <code>fetch()</code> to get data from APIs. The response comes back as JSON which you can then use in your page.',
+  'git':'Git tracks changes to your code. Basic commands: <code>git init</code> starts a repo, <code>git add .</code> stages files, <code>git commit -m "message"</code> saves changes, <code>git push</code> uploads to GitHub.',
+  'deploy':'Deploying means making your site live on the internet. Options: GitHub Pages (free for static sites), Vercel (great for frontend apps), Netlify (easy git-based deploy).',
+  'career':'To get started in web dev: 1) Learn HTML/CSS/JS basics 2) Build 3-5 projects 3) Learn a framework (React) 4) Create a portfolio 5) Apply for junior roles or freelance. Consistency beats intensity.',
+ };
+ var reply=null;
+ for(var key in answers){
+  if(m.includes(key)){reply=answers[key];break;}
+ }
+ 
+ fetch('https://keith-switching-meaning-calculate.trycloudflare.com/api/tutor',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:i.value.trim(),username:USER||''})})
+ .then(function(r){return r.json();}).then(function(d){var e=document.getElementById('typing');if(e)e.remove();var x=document.createElement('div');x.className='ai-msg b';x.innerHTML=(d.reply||'').replace(/\n/g,'<br>');c.appendChild(x);c.scrollTop=c.scrollHeight;})
+ .catch(function(){
+  var e=document.getElementById('typing');if(e)e.remove();
+  var x=document.createElement('div');x.className='ai-msg b';
+  if(reply){
+   x.innerHTML=reply+'<br><br><span style="font-size:11px;color:var(--text2)">💡 Offline mode — limited to basic topics. Connect backend for full AI.</span>';
+  } else {
+   x.textContent='I\'m offline right now. Try asking about: HTML, CSS, JavaScript, Tailwind, React, Flexbox, Grid, Git, or API.';
+  }
+  c.appendChild(x);c.scrollTop=c.scrollHeight;
+ });
 }
 function esc(s){if(!s)return'';return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
 
